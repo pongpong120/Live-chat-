@@ -1,0 +1,16 @@
+'use strict';
+const assert=require('assert');
+const {validate}=require('../storage/uploadValidation');
+const wallet=require('../production/walletAuthority');
+const refresh=require('../security/refreshTokens');
+console.log('Production Upgrade — static/unit checks');
+assert.strictEqual(typeof validate,'function');
+assert.throws(()=>validate({buffer:Buffer.from('bad'),mimeType:'image/png',originalName:'x.png'}),/content/);
+assert.strictEqual(wallet.enabled(),false,'without DATABASE_URL the authority must stay disabled');
+assert.ok(refresh.ACCESS_TTL_MS < refresh.REFRESH_TTL_MS,'access token must be shorter lived than refresh token');
+assert.ok(require('fs').existsSync(require('path').join(__dirname,'..','db','migrations','002_production_core.sql')));
+console.log('  ✓ upload magic-byte validation');
+console.log('  ✓ production wallet remains fail-closed without Postgres');
+console.log('  ✓ refresh token lifetime hierarchy');
+console.log('  ✓ production schema migration exists');
+console.log('productionUpgrade.test: PASS');

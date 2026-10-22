@@ -1,0 +1,2194 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<link rel="icon" type="image/png" href="/images/pingpong-app-icon.png?v=20261019-playstore-kit-icon">
+<link rel="apple-touch-icon" href="/images/pingpong-app-icon.png?v=20261019-playstore-kit-icon">
+<link rel="manifest" href="/manifest.webmanifest?v=20261019-icon-update">
+<meta name="theme-color" content="#26B5A5">
+<title>PingPong — Meet · Talk · Play</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,900&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css?v=20261017-daily-task">
+<link rel="stylesheet" href="reference-ui-pass-2026-10-04.css?v=20261004">
+<link rel="stylesheet" href="party-room-premium-2026-10-06.css?v=20261006">
+<link rel="stylesheet" href="party-ui-premium-2026-10-06.css?v=20261006">
+<link rel="stylesheet" href="party-room-premium-2026-10-08.css?v=20261010-ref">
+<link rel="stylesheet" href="party-room-final-2026-10-11.css?v=20261011-final">
+<link rel="stylesheet" href="premium-polish-2026-10-19.css?v=20261019-premium-polish">
+
+<style id="vapi-robin-support-css">
+/* Hands-free Customer Service: no Robin popup, mute, end, or start controls are shown. */
+#vapi-robin-overlay{display:none!important;visibility:hidden!important;pointer-events:none!important}
+#btn-robin-support{display:none!important}
+#btn-robin-mute,#btn-robin-end,#btn-robin-close{display:none!important}
+#btn-robin-support{
+  position:relative;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  min-width:44px;
+}
+#btn-robin-support .robin-dot{
+  width:8px;height:8px;border-radius:50%;
+  background:#63f5b0;
+  box-shadow:0 0 10px rgba(99,245,176,.85);
+}
+#btn-robin-support.robin-active .robin-dot{background:#ffcc66;box-shadow:0 0 10px rgba(255,204,102,.9);}
+#vapi-robin-overlay{
+  position:fixed;inset:0;z-index:99999;
+  display:flex;align-items:flex-end;justify-content:center;
+  padding:18px;pointer-events:none;
+}
+#vapi-robin-overlay.hidden{display:none}
+#vapi-robin-card{
+  width:min(430px,100%);
+  border-radius:24px;
+  padding:18px;
+  background:rgba(12,18,28,.96);
+  border:1px solid rgba(255,255,255,.12);
+  box-shadow:0 20px 70px rgba(0,0,0,.45);
+  color:#fff;pointer-events:auto;
+  backdrop-filter:blur(18px);
+}
+.robin-head{display:flex;align-items:center;gap:12px}
+.robin-avatar{
+  width:52px;height:52px;border-radius:50%;object-fit:cover;
+  background:rgba(255,255,255,.08);
+}
+.robin-title{font-weight:800;font-size:17px}
+.robin-subtitle{font-size:12px;opacity:.68;margin-top:2px}
+#vapi-robin-status{
+  margin:16px 0 12px;
+  min-height:22px;
+  text-align:center;
+  font-size:14px;
+  opacity:.88;
+}
+#vapi-robin-transcript{
+  max-height:150px;overflow:auto;
+  padding:10px 12px;border-radius:14px;
+  background:rgba(255,255,255,.055);
+  font-size:12px;line-height:1.45;
+  display:none;
+}
+.robin-controls{display:flex;gap:10px;margin-top:14px}
+.robin-control{
+  flex:1;border:0;border-radius:14px;padding:12px 14px;
+  font-weight:800;cursor:pointer;
+}
+#btn-robin-mute{background:rgba(255,255,255,.10);color:#fff}
+#btn-robin-end{background:#d9535f;color:#fff}
+#btn-robin-close{background:transparent;color:#fff;border:0;font-size:20px;margin-left:auto;cursor:pointer}
+.robin-pulse{
+  width:10px;height:10px;border-radius:50%;display:inline-block;
+  background:#63f5b0;animation:robinPulse 1.25s infinite;
+}
+@keyframes robinPulse{50%{transform:scale(1.65);opacity:.35}}
+
+/* Room game hub: three large game tiles, opens from the always-visible controller. */
+.game-hub-modal{z-index:13000;background:rgba(8,3,22,.76);padding:0 14px 18px;align-items:flex-end!important;justify-content:center!important}
+.game-hub-modal.hidden{display:none!important}
+.game-hub-card{width:min(100%,560px);height:min(70dvh,620px);min-height:300px;display:flex;flex-direction:column;overflow:hidden;border:1px solid #f7d76c88;border-radius:22px 22px 18px 18px;background:linear-gradient(160deg,#211039,#100b20 70%);box-shadow:0 0 28px #e82cff44;color:#fff}
+.game-hub-head{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;border-bottom:1px solid #ffffff22;background:linear-gradient(90deg,#6411a5,#b81bc6)}
+.game-hub-head h3{margin:0;font-size:18px;font-weight:900;letter-spacing:.4px}
+.game-hub-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;padding:14px;align-content:center;flex:1;min-height:0}
+.game-hub-tile{min-width:0;align-self:center;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;padding:8px 5px 12px;border:1px solid #f5d66b88;border-radius:15px;background:linear-gradient(160deg,#3a2459,#191229);color:#fff;font-weight:800;font-size:clamp(11px,3.2vw,14px);box-shadow:0 5px 0 #080511,0 0 12px #ffcb4a22;cursor:pointer}
+.game-hub-tile img{display:block;width:100%;max-width:112px;aspect-ratio:1;object-fit:contain;border-radius:12px;background:#f000e9}
+.game-hub-tile:active{transform:scale(.97)}
+.game-hub-note{text-align:center;padding:0 12px 12px;color:#d6c7e8;font-size:11px}
+@media(min-width:700px){.game-hub-modal{align-items:center!important;padding:18px}.game-hub-card{height:min(70dvh,620px);border-radius:22px}.game-hub-tile img{max-width:145px}}
+/* Teen Patti Shop game: compact half-screen bottom sheet matching room game overlays. */
+.teen-patti-sheet{z-index:12000;align-items:flex-end!important;justify-content:center!important;padding:0!important;background:rgba(0,0,0,.72)}
+.teen-patti-sheet.hidden{display:none!important}
+.teen-patti-sheet-card{width:min(100%,520px);height:min(74dvh,720px);min-height:420px;background:#1a120a;border-radius:18px 18px 0 0;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 -8px 32px #0008}
+.teen-patti-sheet-head{height:42px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 12px;color:#fff;background:linear-gradient(90deg,#7a2518,#c33d23);border-bottom:1px solid #ffffff30}
+.teen-patti-sheet-head .icon-btn{color:#fff}
+#teen-patti-frame{border:0;width:100%;flex:1;min-height:0;background:#fbe9c0}
+/* Lucky Slot: iframe had no sizing rule (fell back to 300x150 default) -> fill the sheet, taller sheet for the 3x5 reels + bet bar. */
+#classic-slot-frame,#lucky-pro-frame{display:block;border:0;width:100%;flex:1 1 auto;min-height:0;height:100%;background:#07041f}
+#classic-slot-sheet .teen-patti-sheet-card{height:min(92dvh,860px);min-height:480px;background:#07041f}
+@media(min-width:700px){.teen-patti-sheet{align-items:center!important}.teen-patti-sheet-card{height:min(78dvh,760px);border-radius:18px}}
+</style>
+<style id="mobile-number-black-fix">
+#mobile-input{color:#000 !important;-webkit-text-fill-color:#000 !important;caret-color:#000 !important;}
+#mobile-input::placeholder{color:#777 !important;-webkit-text-fill-color:#777 !important;}
+</style>
+</head>
+<body>
+
+<div id="toast" class="toast" role="alert" aria-live="assertive"></div>
+<div id="kept-room-pill" class="kept-room-pill hidden" aria-live="polite">
+  <button id="btn-open-kept-room" class="kept-room-open" type="button" aria-label="Open kept room">
+    <span class="kept-room-live-dot" aria-hidden="true"></span>
+    <span class="kept-room-copy">
+      <strong id="kept-room-name">Room</strong>
+      <small><span id="kept-room-id">ID: —</span> · <span id="kept-room-online">0 online</span></small>
+    </span>
+    <span class="kept-room-open-label">OPEN</span>
+  </button>
+  <button id="btn-exit-kept-room" class="kept-room-exit" type="button" aria-label="Exit room">✕</button>
+</div>
+<div id="announce-banner" class="announce-banner hidden"></div>
+<div id="legend-gift-overlay" class="legend-gift-overlay hidden">
+  <div class="legend-burst-rays"></div>
+  <div id="legend-gift-emoji" class="legend-gift-emoji"></div>
+  <div id="legend-gift-text" class="legend-gift-text" aria-live="polite"></div>
+</div>
+
+<!-- ============ LOGIN ============ -->
+<section id="view-login" class="view active">
+  <!-- Login background video (2026-08-16): decorative only, so aria-hidden.
+       muted+playsinline+autoplay+loop is required for iOS/Android autoplay
+       to actually work; poster shows instantly while the video buffers. -->
+  <video class="login-bg-video" src="media/login-bg.mp4" poster="media/login-bg-poster.jpg"
+         autoplay muted loop playsinline preload="auto" aria-hidden="true"></video>
+  <div class="login-bg-fade" aria-hidden="true"></div>
+  <div class="auth-wrap">
+    <div class="brand">
+      <div class="brand-mark"><img src="/images/pingpong-app-icon.png?v=20261019-playstore-kit-icon" alt="PingPong" draggable="false"></div>
+      <h1>PingPong</h1>
+      <p class="brand-sub">Meet · Talk · Play</p>
+    </div>
+    <div id="step-social" class="auth-card">
+      <p class="hint" style="text-align:center;">Sign in securely with your Google account.</p>
+      <button id="btn-google-login" class="btn btn-ghost btn-block auth-google-btn" type="button">
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="" class="google-icon">
+        Continue with Google
+      </button>
+      <p class="auth-support">Official Support: <a href="mailto:pingpongappsupport@gmail.com">pingpongappsupport@gmail.com</a></p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FIRST TIME PROFILE SETUP (new user only) ============ -->
+<!-- Shown exactly once, right after OTP/password verification succeeds for
+     a brand-new account (profile_completed:false). Old accounts skip this
+     screen forever — see enterApp()/routeAfterLogin() in app.js. -->
+<section id="view-profile-setup" class="view">
+  <div class="auth-wrap">
+    <div class="brand">
+      <div class="brand-mark"><img src="/images/pingpong-app-icon.png?v=20261019-playstore-kit-icon" alt="PingPong" draggable="false"></div>
+      <h1 data-i18n="ps_title">Create Your Profile</h1>
+      <p class="brand-sub" data-i18n="ps_subtitle">Fill in the details below to complete your account — you'll only need to do this once.</p>
+    </div>
+
+    <div class="auth-card ps-card">
+      <!-- Section 1: Profile Picture -->
+      <div class="ps-avatar-wrap">
+        <div class="avatar-frame-wrap" id="ps-avatar-frame">
+          <img id="ps-avatar-preview" class="avatar avatar-lg" src="" alt="">
+        </div>
+        <button id="ps-avatar-btn" type="button" class="ps-avatar-edit-btn">📷</button>
+        <input id="ps-photo-camera" type="file" accept="image/*" capture="environment" class="hidden">
+        <input id="ps-photo-gallery" type="file" accept="image/*" class="hidden">
+      </div>
+      <div id="ps-photo-sheet" class="ps-photo-sheet hidden">
+        <button id="ps-pick-camera" type="button" class="btn btn-ghost btn-block" data-i18n="ps_camera">📷 Camera</button>
+        <button id="ps-pick-gallery" type="button" class="btn btn-ghost btn-block" data-i18n="ps_gallery">🖼️ Gallery</button>
+        <button id="ps-photo-sheet-close" type="button" class="btn btn-ghost btn-block" data-i18n="ps_skip_photo">✕ Skip</button>
+      </div>
+
+      <!-- Section 2: Gender -->
+      <label class="field-label" data-i18n="ps_gender">Gender</label>
+      <div class="ps-gender-row" id="ps-gender-row">
+        <button type="button" class="ps-gender-pill" data-gender="Male"><span>♂</span> <span data-i18n="ps_male">Male</span></button>
+        <button type="button" class="ps-gender-pill" data-gender="Female"><span>♀</span> <span data-i18n="ps_female">Female</span></button>
+        <button type="button" class="ps-gender-pill" data-gender="Not Specified"><span>⚧</span> <span data-i18n="ps_not_specified">Not Specified</span></button>
+      </div>
+
+      <!-- Section 3: Username -->
+      <label class="field-label" for="ps-username" data-i18n="ps_username">Username</label>
+      <input id="ps-username" class="field-solo" maxlength="20" placeholder="Labib, PingKing, StarHost...">
+      <p id="ps-username-status" class="ps-field-status"></p>
+
+      <!-- Section 4: Country -->
+      <label class="field-label" for="ps-country" data-i18n="ps_country">Country</label>
+      <select id="ps-country" class="field-solo"></select>
+
+      <!-- Section 5: Language -->
+      <label class="field-label" for="ps-language" data-i18n="ps_language">Language</label>
+      <select id="ps-language" class="field-solo"></select>
+
+      <button id="btn-save-profile-setup" class="btn btn-primary btn-block" data-i18n="ps_save">Save</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ HOME ============ -->
+<section id="view-home" class="view">
+  <div class="home-fixed-head">
+    <header class="home-mainbar">
+      <button class="home-icon-btn" type="button" aria-label="Home"><img src="/images/icons/home-top.png" alt="Home" draggable="false"></button>
+      <div class="home-primary-tabs" id="home-primary-tabs">
+        <button class="home-primary-tab active" data-home-tab="mine" type="button">Mine</button>
+        <button class="home-primary-tab" data-home-tab="popular" type="button">Popular</button>
+      </div>
+      <button class="home-search-btn" id="btn-home-search" type="button" aria-label="Search"><img src="/images/icons/search-top.png" alt="Search" draggable="false"></button>
+    </header>
+
+    <div id="home-search-bar" class="home-search-bar hidden">
+      <span class="home-search-icon">⌕</span>
+      <input id="home-search-input" type="search" placeholder="Search rooms, hosts or room ID" autocomplete="off">
+      <button id="home-search-clear" type="button" aria-label="Clear search">×</button>
+    </div>
+
+    <div id="banner-slider-container" class="home-popular-banner hidden"></div>
+
+    <section id="home-popular-tools" class="home-popular-tools hidden" aria-label="Popular rankings">
+      <button class="popular-tool-card ranking" data-popular-tool="ranking" type="button">
+        <span class="popular-tool-copy"><strong>Ranking</strong></span>
+        <span class="popular-tool-art" aria-hidden="true"><span class="art-avatar a1">👩🏻</span><span class="art-avatar a2">👨🏻</span><span class="art-avatar a3">👩🏽</span><em class="art-top t1">TOP1</em></span>
+      </button>
+      <button class="popular-tool-card family" data-popular-tool="family" type="button">
+        <span class="popular-tool-copy"><strong>Family</strong></span>
+        <span class="popular-tool-art" aria-hidden="true"><span class="art-avatar a1">👪</span><span class="art-avatar a2">👨🏻</span><span class="art-avatar a3">👩🏽</span><em class="art-top t1">TOP3</em></span>
+      </button>
+      <button class="popular-tool-card cp" data-popular-tool="cp" type="button">
+        <span class="popular-tool-copy"><strong>CP / Friend</strong></span>
+        <span class="popular-tool-art" aria-hidden="true"><span class="art-avatar a1">👩🏻</span><span class="art-avatar a2">👨🏻</span><span class="heart">♥</span></span>
+      </button>
+    </section>
+
+    <div id="home-popular-filter" class="home-popular-filter hidden" role="tablist">
+      <button class="popular-filter active" data-popular-filter="popular" type="button">🔥 Popular</button>
+      <button class="popular-filter" data-popular-filter="game" type="button">Game</button>
+      <button class="popular-filter" data-popular-filter="video-music" type="button">Video/Music</button>
+    </div>
+    <section id="home-popular-events" class="home-popular-events hidden" aria-label="Live events"></section>
+
+    <section id="home-my-room-card" class="home-my-room hidden" aria-label="My room">
+      <div class="home-my-room-media"><img id="home-my-room-logo" src="" alt=""></div>
+      <div class="home-my-room-body">
+        <div class="home-my-room-title-row">
+          <span id="home-my-room-flag" class="room-flag"></span>
+          <h3 id="home-my-room-name"></h3>
+        </div>
+        <span id="home-my-room-meta" class="home-my-room-meta"></span>
+      </div>
+      <div class="home-my-room-live"><span class="live-dot"></span><span id="home-my-room-online">0</span></div>
+    </section>
+
+    <div class="home-secondary-tabs" id="social-tabs">
+      <button class="social-tab active" data-tab="recently" type="button">Recent</button>
+      <button class="social-tab" data-tab="myroom" type="button">Followed Rooms</button>
+      <button class="social-tab" data-tab="following" type="button">Followed Users</button>
+    </div>
+  </div>
+
+  <main class="home-room-scroll" id="home-room-scroll">
+    <div id="social-panel-live" class="social-panel">
+      <div class="home-room-section-head">
+        <span id="home-room-section-title">Rooms</span>
+        <button id="btn-create-room" class="btn btn-accent btn-sm">+ Create Room</button>
+      </div>
+      <div id="home-room-mode-label" class="home-room-mode-label hidden"></div>
+      <div id="room-list" class="room-grid"></div>
+      <div id="room-empty" class="empty-state hidden">
+        <p>No rooms yet.</p>
+        <p class="empty-sub">Be the first to create a room.</p>
+      </div>
+    </div>
+
+    <div id="social-panel-following" class="social-panel hidden">
+      <div id="following-list" class="social-list"></div>
+      <div id="following-empty" class="empty-state hidden">
+        <p>You haven't followed anyone yet.</p>
+      </div>
+      <button id="btn-following-load-more" class="btn btn-ghost btn-block hidden">Show more</button>
+    </div>
+
+    <div id="social-panel-recently" class="social-panel hidden">
+      <div class="section-head social-panel-head">
+        <span></span>
+        <button id="btn-clear-recent" class="link-btn">Clear History</button>
+      </div>
+      <div id="recent-rooms-list" class="social-list"></div>
+      <div id="recent-rooms-empty" class="empty-state hidden">
+        <p>No history yet.</p>
+      </div>
+      <button id="btn-recent-load-more" class="btn btn-ghost btn-block hidden">Show more</button>
+    </div>
+
+    <div id="social-panel-myroom" class="social-panel hidden">
+      <div id="my-room-list" class="social-list"></div>
+      <div id="my-room-empty" class="empty-state hidden">
+        <p>You don't have a live room.</p>
+      </div>
+    </div>
+  </main>
+
+  <nav class="bottom-nav">
+    <button class="nav-btn active" data-nav="home"><img class="nav-icon-custom" src="/images/icons/custom-nav/nav-home.png" alt="Home" draggable="false"><span data-i18n="nav_home">Home</span></button>
+    <button class="nav-btn inbox-nav-btn" data-nav="inbox"><span class="inbox-unread-badge hidden">0</span><img class="nav-icon-custom" src="/images/icons/custom-nav/nav-inbox.png" alt="Inbox" draggable="false"><span data-i18n="nav_inbox">Message</span></button>
+    <button class="nav-btn" data-nav="profile"><img class="nav-icon-custom" src="/images/icons/custom-nav/nav-profile.png" alt="Profile" draggable="false"><span data-i18n="nav_profile">Me</span></button>
+  </nav>
+</section>
+
+<!-- ============ CREATE ROOM MODAL ============ -->
+<div id="modal-create-room" class="modal-overlay hidden">
+  <div class="modal-card">
+    <h3>Create a New Room</h3>
+    <input id="create-room-name" type="text" placeholder="Room name" class="field-solo">
+    <div class="modal-actions">
+      <button id="btn-cancel-create-room" class="btn btn-ghost">Cancel</button>
+      <button id="btn-confirm-create-room" class="btn btn-primary">Create</button>
+    </div>
+  </div>
+</div>
+
+<div id="modal-create-group" class="modal-overlay hidden">
+  <div class="modal-card">
+    <h3>Create New Group</h3>
+    <input id="create-group-name" type="text" placeholder="Group name" class="field-solo">
+    <div class="modal-actions">
+      <button id="btn-cancel-create-group" class="btn btn-ghost">Cancel</button>
+      <button id="btn-confirm-create-group" class="btn btn-primary">Create</button>
+    </div>
+  </div>
+</div>
+
+<div id="modal-group-detail" class="modal-overlay hidden">
+  <div class="modal-card">
+    <h3 id="group-detail-name"></h3>
+    <p class="hint" id="group-detail-meta"></p>
+    <input id="group-icon-file" type="file" accept="image/*" class="hidden">
+    <div class="modal-actions">
+      <button id="btn-group-change-icon" class="btn btn-ghost hidden">Change Icon</button>
+      <button id="btn-group-delete" class="btn btn-danger hidden">Delete Group</button>
+      <button id="btn-group-leave" class="btn btn-ghost hidden">Leave Group</button>
+      <button id="btn-group-daily-task" class="btn btn-ghost" type="button">Daily Task</button>
+      <button id="btn-group-detail-close" class="btn btn-primary">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Premium Daily Task popup — rewards are loaded and claimed from the server. -->
+<div id="modal-daily-task" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="daily-task-popup-title">
+  <div class="modal-card daily-task-popup-card">
+    <div class="daily-task-popup-head"><span class="daily-task-popup-emblem"><img src="/images/icons/icon-diamond-premium.png" alt="Diamonds"></span><div><h3 id="daily-task-popup-title">Daily Task</h3><p>Claim real server-verified diamond rewards</p></div><button id="btn-daily-task-popup-close" class="icon-btn" type="button" aria-label="Close Daily Task">×</button></div>
+    <div class="daily-task-popup-reward"><span>Today's reward</span><strong id="daily-task-popup-amount">— Diamonds</strong><small id="daily-task-popup-status">Checking your reward eligibility…</small></div>
+    <div class="daily-task-popup-streak" id="daily-task-popup-streak">7-day reward schedule · one claim per 12-hour cooldown</div>
+    <div id="daily-task-popup-schedule" class="daily-task-popup-schedule" aria-label="Seven day reward schedule"></div>
+    <button id="btn-daily-task-popup-claim" class="btn btn-primary btn-block" type="button">Claim Reward</button>
+    <p class="daily-task-popup-footnote">Room owners also receive 2% of eligible room gift spend after midnight (India time). No demo rewards are issued.</p>
+  </div>
+</div>
+
+<!-- ============ VOICE ROOM ============ -->
+<section id="view-room" class="view">
+  <header class="room-topbar">
+    <button id="btn-leave-room" class="icon-btn room-header-keep" type="button" title="Keep room open" aria-label="Keep room open">KEEP</button>
+    <img id="room-logo-display" class="room-logo-display hidden" alt="">
+    <div class="room-title-block" id="room-title-block">
+      <h2 id="room-name-display">Room <span id="room-lock-badge" class="room-lock-badge hidden" title="Room locked">🔒</span></h2>
+      <div class="room-sub-row"><span id="room-host-display" class="sub" aria-label="Room ID"></span>
+        <button class="stat-pill stat-pill-btn room-online-counter" id="room-online-count" title="See who's here" aria-label="Online members"><img class="room-online-members-icon" src="/images/room-online-members.png" alt=""><span id="room-online-count-value">0</span></button></div>
+    </div>
+    <div class="room-welcome-marquee" aria-hidden="true"><span>WELCOME &nbsp;&nbsp;&nbsp;&nbsp; WELCOME</span></div>
+    <button class="stat-pill stat-pill-btn" id="btn-level-info" title="My Level">⭐</button>
+    <!-- Room actions stay inside the room; Settings is opened from the
+         compact Room Profile card instead of taking header space. -->
+    <button id="btn-room-share-top" class="icon-btn room-header-action room-header-share" type="button" title="Share room" aria-label="Share room"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6"/><path d="M20 4l-9 9"/><path d="M18 14v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4"/></svg></button>
+    <button id="btn-room-actions" class="icon-btn room-header-action room-header-more" type="button" title="More room actions" aria-label="More room actions"><img src="/images/icons/room-more-transparent.png" alt="More"></button>
+    <button id="btn-room-power" class="icon-btn room-header-power room-header-exit" type="button" title="Exit room" aria-label="Exit room"><img src="/images/icons/room-exit-transparent.png" alt="Exit"></button>
+    <!-- Hidden compatibility button: the existing Room Settings logic is
+         preserved; the compact profile Settings button triggers it. -->
+    <button id="btn-room-mod" class="icon-btn hidden" title="Room settings" aria-hidden="true" tabindex="-1"><img src="/images/pdf-assets/settings.png" class="pp-pdf-settings-icon" alt="Settings"></button>
+  </header>
+
+  <!-- Premium room ranking strip: intentionally sits below the identity header
+       and above the seats, matching the supplied reference composition. The
+       existing button ID/listeners are preserved, so ranking logic is unchanged. -->
+  <div class="party-room-quickbar" aria-label="Party room status">
+    <div class="party-room-group-pill"><span class="party-room-group-heart">❤</span><span class="party-room-group-label">Group <strong id="party-room-score">0</strong></span></div>
+    <button id="btn-room-daily-task" class="room-daily-task-shortcut" type="button" aria-label="Open Daily Task"><img src="/images/icons/icon-diamond-premium.png" alt=""><span>Daily Task</span></button>
+    <span class="party-room-latency hidden"><strong id="party-room-ping">—</strong></span>
+    <button id="btn-room-ranking" class="party-ranking-btn" type="button" title="Ranking" aria-label="Ranking"><span id="ranking-preview-avatars" class="ranking-preview-avatars"><span class="rank-ph"></span><span class="rank-ph"></span><span class="rank-ph"></span></span><span class="rank-chevron">›</span></button>
+  </div>
+
+  <!-- YouTube Room Player (2026-07-27 layout update) — its own full-width
+       block between the header and the seat grid, kept to a fixed 16:9
+       aspect ratio (roughly the top quarter of the screen on a typical
+       phone). Sits in normal document flow, so the seat grid below it is
+       automatically pushed down whenever this block is visible — nothing
+       needs to be positioned or sized manually. Hidden entirely while Video
+       Mode is off, so the room looks/behaves exactly as before in that
+       case. -->
+  <div id="yt-player-wrap" class="yt-player-wrap hidden">
+    <div id="yt-player-frame" class="yt-player-frame">
+      <img id="yt-player-poster" class="yt-player-poster hidden" alt="">
+      <div id="yt-player-mount"></div>
+      <div id="yt-player-loading" class="yt-player-loading hidden">Loading...</div>
+      <div id="yt-player-empty" class="yt-player-empty">Play a video from the Playlist</div>
+    </div>
+
+    <!-- The ONE permanent control per spec: small, circular, semi-
+         transparent, top-right, always tappable regardless of the
+         tap-to-reveal overlay state below. -->
+    <button id="btn-yt-mini-close" class="yt-mini-close" title="Close video">✕</button>
+
+    <!-- Everything else (title/info + prev/play/next/more) is hidden by
+         default and only appears when the user taps the video, then
+         auto-hides again — driven by the .yt-controls-visible class on
+         #yt-player-wrap (see app.js). -->
+    <div id="yt-overlay-controls" class="yt-overlay-controls">
+      <div class="yt-player-info">
+        <img id="yt-player-thumb" class="yt-player-thumb" alt="">
+        <div class="yt-player-titlewrap">
+          <div id="yt-player-title" class="yt-player-title">No video playing</div>
+          <div id="yt-player-sub" class="yt-player-sub"></div>
+        </div>
+        <span class="yt-badge">▶ YouTube</span>
+      </div>
+      <!-- Compact control bar: Prev/Play-Pause/Next are only for the
+           owner/admin (they actually drive playback), spread out because
+           they're the frequent one-tap actions. Everything else — Playlist,
+           Share, Refresh, Voice, Close — lives behind a single ⋮ so the
+           video area stays clean, and the ⋮ itself is available to every
+           viewer (not just the controller). -->
+      <div id="yt-player-controls" class="yt-player-controls hidden">
+        <button id="btn-yt-prev" class="yt-ctrl-btn hidden" title="Previous">⏮</button>
+        <button id="btn-yt-playpause" class="yt-ctrl-btn yt-ctrl-btn-main hidden" title="Play/Pause">▶️</button>
+        <button id="btn-yt-next" class="yt-ctrl-btn hidden" title="Next">⏭</button>
+        <div id="yt-more-wrap" class="yt-more-wrap">
+          <button id="btn-yt-more" class="yt-ctrl-btn" title="More">⋮</button>
+          <div id="yt-more-menu" class="yt-more-menu hidden">
+            <button id="btn-open-yt-playlist-2" class="yt-more-item">📋 Play List</button>
+            <button id="btn-yt-share" class="yt-more-item">📤 Share</button>
+            <button id="btn-yt-refresh" class="yt-more-item">🔄 Refresh</button>
+            <button id="btn-yt-voice" class="yt-more-item">🔊 Sound On</button>
+            <button id="btn-yt-open-external" class="yt-more-item">▶ Open in YouTube</button>
+            <button id="btn-yt-copy-link" class="yt-more-item">🔗 Copy Link</button>
+            <button id="btn-yt-close" class="yt-more-item yt-more-item-danger">✕ Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="gift-banner" class="gift-banner" aria-live="polite"></div>
+  <div id="room-gift-mention" class="room-gift-mention hidden" aria-live="polite" role="status"></div>
+
+  <div class="stage-wrap" id="stage-wrap">
+    <div class="stage-glow"></div>
+    <div id="gift-fly-layer" class="gift-fly-layer"></div>
+    <div id="emoji-reaction-layer" class="emoji-reaction-layer"></div>
+    <div id="video-gift-overlay" class="video-gift-overlay hidden">
+      <video id="video-gift-player" playsinline webkit-playsinline preload="auto"></video>
+    </div>
+    <div id="vip-entry-overlay" class="vip-entry-overlay hidden" aria-hidden="true">
+      <div id="vip-entry-vap" class="vip-entry-vap"></div>
+      <img id="vip-entry-fallback" class="vip-entry-fallback hidden" alt="">
+      <div class="vip-entry-copy">
+        <div id="vip-entry-kicker" class="vip-entry-kicker">VIP ENTRY</div>
+        <div id="vip-entry-title" class="vip-entry-title">SVIP 6</div>
+      </div>
+    </div>
+    <div id="vehicle-entry-overlay" class="video-gift-overlay hidden">
+      <video id="vehicle-entry-player" playsinline></video>
+      <audio id="vehicle-entry-music"></audio>
+      <audio id="vehicle-entry-sound"></audio>
+    </div>
+    <div id="seat-grid" class="seat-grid"></div>
+    <div id="room-tv-screen" class="room-tv-screen">
+      <button id="btn-room-tv-close" class="room-tv-close">✕</button>
+      <div class="room-tv-tabs">
+        <button class="room-tv-tab active" data-game="foodwheel">🍀 Lucky Fruit</button>
+      </div>
+      <div class="room-tv-frame-wrap" id="room-tv-frame-wrap">
+        <iframe id="room-tv-frame" class="room-tv-frame" title="Room Game" src="about:blank" allow="autoplay; fullscreen; microphone; camera" allowfullscreen scrolling="no"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <!-- Treasure Chest -->
+  <div id="chest-wrap" class="chest-wrap">
+    <button id="btn-lucky-fruit-launcher" class="lucky-fruit-launcher" type="button" aria-label="Open Lucky Fruit">
+      <img src="/images/lucky-fruit-launcher.png" alt="Lucky Fruit">
+    </button>
+    <button id="btn-chest-info" class="chest-info-btn" title="Chest details" aria-label="Chest details">ⓘ</button>
+    <button id="chest-box" class="chest-box" type="button" aria-label="Open Treasure Chest details">
+      <div class="chest-body">
+        <img id="chest-img" class="chest-img" src="/images/chest-box.png" alt="Treasure Chest">
+        <div class="chest-flash"></div>
+      </div>
+      <div class="chest-sparkle s1"></div>
+      <div class="chest-sparkle s2"></div>
+      <div class="chest-sparkle s3"></div>
+    </button>
+    <button id="private-message-indicator" class="private-message-indicator hidden" aria-live="polite" aria-label="Private messages" title="Private messages" type="button">
+      <img src="/images/icons/icon-private-message.png" alt="Private messages">
+      <span class="private-message-label">Private messages</span>
+      <span id="private-message-count" class="private-message-count hidden">0</span>
+    </button>
+    <div class="chest-level-tag">LV.<span id="chest-level">1</span></div>
+    <div class="chest-progress-track">
+      <div id="chest-progress-fill" class="chest-progress-fill"></div>
+    </div>
+    <div class="chest-progress-label"><span id="chest-contributed">0</span> / <span id="chest-target">100000</span> <img src="/images/icons/icon-diamond-premium.png" class="currency-icon" alt="diamond"></div>
+    <div class="chest-countdown">Reset: <span id="chest-countdown">--:--:--</span></div>
+  </div>
+
+  <!-- ROOM PRIVATE MESSAGE FLOATING WINDOW
+       Room-only message inbox. It never navigates to Home/Profile/Inbox.
+       Tapping a conversation opens the inline thread; the X closes the
+       floating window and returns directly to the room. -->
+  <section id="room-private-message-window" class="room-private-message-window hidden"
+           role="dialog" aria-modal="false" aria-label="Room messages">
+    <div class="room-private-head">
+      <button id="room-private-back" class="room-private-head-btn hidden" type="button" aria-label="Back to messages">‹</button>
+      <div class="room-private-title-wrap">
+        <strong id="room-private-title">Messages</strong>
+        <span id="room-private-subtitle">Room messages</span>
+      </div>
+      <button id="room-private-close" class="room-private-head-btn" type="button" aria-label="Close messages">✕</button>
+    </div>
+
+    <div id="room-private-conversation-list" class="room-private-conversation-list"></div>
+    <div id="room-private-empty" class="room-private-empty hidden">No messages yet.</div>
+
+    <div id="room-private-thread" class="room-private-thread hidden">
+      <div id="room-private-thread-log" class="room-private-thread-log"></div>
+      <div class="room-private-compose">
+        <input id="room-private-input" type="text" maxlength="1000" autocomplete="off"
+               placeholder="Type a message..." aria-label="Message">
+        <button id="room-private-send" type="button" aria-label="Send message">➤</button>
+      </div>
+    </div>
+  </section>
+
+  <div id="vapi-robin-overlay" class="hidden" aria-live="polite">
+    <div id="vapi-robin-card" role="dialog" aria-modal="true" aria-label="Robin AI Voice Support">
+      <div class="robin-head">
+        <img id="vapi-robin-avatar" class="robin-avatar" src="/photos/cs101-female.svg" alt="Robin">
+        <div>
+          <div class="robin-title">Robin — PingPong Support</div>
+          <div class="robin-subtitle"><span id="vapi-robin-pulse" class="robin-pulse"></span> <span id="vapi-robin-status-label">Ready</span></div>
+        </div>
+        <button id="btn-robin-close" title="Close">✕</button>
+      </div>
+      <div id="vapi-robin-status">Tap Start to speak with Robin.</div>
+      <div id="vapi-robin-transcript"></div>
+      <div class="robin-controls">
+        <button id="btn-robin-mute" class="robin-control">🎤 Mute</button>
+        <button id="btn-robin-end" class="robin-control">End Support Call</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="chat-panel">
+    <div class="room-info-stack" id="room-info-stack">
+      <div class="room-info-card room-rules-card">Please respect each other and chat in friendly manner. Abuse, sexual and violent contents are not allowed. All violators will be banned.</div>
+      <div class="room-info-card room-announcement-card"><div class="room-announcement-title">Announcement: <span class="room-announcement-edit">✎</span></div><div id="room-announcement-text" class="room-announcement-text">🙂🙂🙂🙂</div></div>
+    </div>
+    <div id="chat-log" class="chat-log empty"></div>
+  </div>
+
+
+  <button id="btn-room-mic-invite" class="room-mic-invite" type="button"><span>Come on mic and chat together~</span><i class="room-mic-invite-art">🎙</i></button>
+
+  <div class="room-toolbar">
+    <button id="btn-room-speaker" class="tool-btn room-speaker-btn" title="Voice On" aria-label="Voice On"><img src="/images/icons/icon-room-speaker.png" class="tool-icon-img room-speaker-icon" alt="Voice On"></button>
+    <div class="room-say-hi">
+      <input id="chat-input" type="text" placeholder="Say hi..." class="chat-input" autocomplete="off">
+      <button id="btn-open-emoji" class="tool-btn room-say-hi-emoji" title="Reactions" aria-label="Reactions"><img src="/images/icons/icon-emoji-reaction.png" class="tool-icon-img emoji-reaction-icon" alt="Reactions"></button>
+    </div>
+    <button id="btn-mic-toggle" class="tool-btn" title="Unmute microphone" aria-label="Unmute microphone"><img src="/images/icons/icon-mic-muted-pdf.png" class="tool-icon-img" alt="Microphone muted"></button>
+    <button id="btn-send-chat" class="tool-btn tool-btn-accent" title="Send">➤</button>
+    <button id="btn-room-bag" class="tool-btn room-bag-btn" title="Recharge" aria-label="Recharge"><img src="/images/icons/icon-diamond-premium.png" class="tool-icon-img" alt="Diamonds"></button>
+    <button id="btn-open-gift" class="tool-btn room-gift-btn" title="Gift"><img src="/images/icons/icon-gift.png" class="tool-icon-img" alt="Gift"></button>
+    <button id="btn-room-game-quick" class="tool-btn room-game-quick" title="Games" aria-label="Games"><img src="/images/icons/icon-controller.png" class="tool-icon-img" alt="Games"></button>
+    <button id="btn-room-more" class="tool-btn" title="More"><img src="/images/icons/icon-menu.png" class="tool-icon-img" alt="Menu"></button>
+  </div>
+
+  <!-- "More" bottom sheet — houses Music / TV / Game / Shop. These are the
+       exact same buttons/IDs that used to sit directly in the room toolbar
+       (see the git history / previous layout); only their location in the
+       DOM moved so they now live behind the ☰ toggle instead of always-on
+       in the bar. No listener, handler, or feature logic was touched —
+       every button below still fires the identical click handler in
+       app.js it always did. -->
+  <div id="room-more-menu" class="modal-overlay hidden">
+    <div class="modal-card room-more-card">
+      <div class="room-more-head">
+        <h3>More</h3>
+        <button id="btn-room-more-close" class="icon-btn">✕</button>
+      </div>
+      <div class="room-more-grid room-more-grid-transparent">
+        <button id="btn-toggle-game" class="room-more-item game-icon-item game-tool-btn hidden" aria-hidden="true" style="display:none!important">
+          <img src="/images/icons/icon-controller.png" class="tool-icon-img" alt="Game"><span class="new-badge">NEW</span>
+          <span class="room-more-label">🍀 Lucky Fruit</span>
+        </button>
+        <button id="btn-open-rocket-crash" class="room-more-item game-icon-item" type="button" aria-hidden="true" style="display:none!important">
+          <img src="/images/icons/icon-controller.png" class="tool-icon-img" alt="Rocket Crash Game">
+          <span class="room-more-label">🚀 Rocket Crash</span>
+        </button>
+        <button id="btn-open-music" class="room-more-item media-icon-item">
+          <img src="/images/icons/icon-music.png" class="tool-icon-img" alt="Music">
+          <span class="room-more-label">🎵 Music</span>
+        </button>
+        <button id="btn-toggle-yt" class="room-more-item media-icon-item hidden">
+          <img src="/images/icons/icon-tv.png" class="tool-icon-img" alt="TV">
+          <span class="room-more-label">📺 TV</span>
+        </button>
+        <button id="btn-open-yt-playlist" class="room-more-item media-icon-item">
+          <img src="/images/icons/icon-menu.png" class="tool-icon-img" alt="Play List">
+          <span class="room-more-label">📋 Play List</span>
+        </button>
+        <button id="btn-open-shop" class="room-more-item">
+          <span class="room-more-shop-icon">🛍</span>
+          <span class="room-more-label">🛍 Shop</span>
+        </button>
+        <div class="room-more-section-label">Premium Effects</div>
+        <button id="btn-toggle-gift-effect" class="room-more-item room-effect-toggle active" type="button" aria-pressed="true">
+          <span class="room-more-effect-icon">✨</span>
+          <span class="room-more-label">Gift Effect</span><span class="effect-toggle-state">ON</span>
+        </button>
+        <button id="btn-toggle-gift-sound" class="room-more-item room-effect-toggle active" type="button" aria-pressed="true">
+          <span class="room-more-effect-icon">🔊</span>
+          <span class="room-more-label">Gift Sound</span><span class="effect-toggle-state">ON</span>
+        </button>
+        <button id="btn-toggle-entry-animation" class="room-more-item room-effect-toggle active" type="button" aria-pressed="true">
+          <span class="room-more-effect-icon">🎬</span>
+          <span class="room-more-label">Entry Animation</span><span class="effect-toggle-state">ON</span>
+        </button>
+        <button id="btn-open-gift-calculator" class="room-more-item hidden" type="button" title="Gift Calculator">
+          <span class="gift-calculator-menu-icon" aria-hidden="true">🧮</span>
+          <span class="room-more-label">Gift Calculator</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gift Calculator — additive room tool. Closing this sheet only hides the
+       panel; ON/OFF controls the calculator itself. No voice/mic controls are
+       rendered here and the existing room toolbar remains untouched. -->
+  <div id="gift-calculator-modal" class="modal-overlay gift-calculator-overlay hidden" aria-hidden="true">
+    <div class="modal-card gift-calculator-card" role="dialog" aria-modal="true" aria-label="Gift Calculator">
+      <button id="gift-calculator-handle" class="gift-calculator-handle" type="button" aria-label="Collapse Gift Calculator"></button>
+      <div class="gift-calculator-head">
+        <h3><span class="gift-calculator-head-icon">🧮</span> Gift Calculator</h3>
+        <div class="gift-calculator-power" role="group" aria-label="Calculator power">
+          <button id="btn-gift-calculator-on" class="gift-calculator-power-btn" type="button">ON</button>
+          <button id="btn-gift-calculator-off" class="gift-calculator-power-btn" type="button">OFF</button>
+          <button id="btn-gift-calculator-x" class="icon-btn" type="button" aria-label="Close">✕</button>
+        </div>
+      </div>
+      <div class="gift-calculator-actions">
+        <button id="btn-gift-calculator-reset" class="btn gift-calculator-reset" type="button">↻ Reset</button>
+        <button id="btn-gift-calculator-close" class="btn gift-calculator-close" type="button">✕ Close</button>
+      </div>
+      <div class="gift-calculator-hint">Auto count gift value per occupied seat. Close hides this panel; OFF stops and clears the calculator.</div>
+    </div>
+  </div>
+
+  <!-- Emoji Reaction bottom sheet — additive, own markup only. Tapping the
+       😊 toolbar button opens this; picking an emoji closes it immediately
+       and fires the reaction (see emojiReaction.js). Does not touch the
+       Gift modal, More menu, or any existing toolbar logic. -->
+  <div id="emoji-reaction-sheet" class="emoji-sheet-overlay hidden">
+    <div id="emoji-sheet-backdrop" class="emoji-sheet-backdrop"></div>
+    <div class="emoji-sheet-card">
+      <div class="emoji-sheet-handle"></div>
+      <div id="emoji-sheet-grid" class="emoji-sheet-grid"></div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ============ GIFT BOX — REFERENCE-MATCH PREMIUM SHEET ============ -->
+<div id="modal-gift" class="modal-overlay hidden gift-modal-overlay">
+  <div class="modal-card gift-modal-card gift-modal-card-premium">
+    <!-- No title/header block: the category rail starts immediately at the top. -->
+    <div class="gift-category-bar" role="tablist" aria-label="Gift categories">
+      <div id="gift-tabs" class="gift-tabs gift-category-tabs">
+        <button class="gift-tab active" data-tier="normal" data-category="gift" role="tab">Gift</button>
+        <button class="gift-tab" data-tier="normal" data-category="lucky" role="tab">Lucky</button>
+        <button class="gift-tab" data-tier="normal" data-category="cp" role="tab">CP</button>
+        <button class="gift-tab" data-tier="vip" data-category="svip" role="tab">SVIP</button>
+        <button class="gift-tab" data-tier="normal" data-category="country" role="tab">Country</button>
+        <button class="gift-tab" data-tier="custom" data-category="customize" role="tab">Customize</button>
+        <button class="gift-tab" data-tier="bag" data-category="bag" role="tab">Bag</button>
+      </div>
+      <div class="gift-category-actions">
+        <button type="button" id="btn-gift-target-toggle" class="gift-target-toggle-btn" title="Choose who to send to" aria-label="Choose who to send to">
+          <span class="gift-target-label-wrap"><span id="gift-target-label" class="gift-target-label">All Users</span></span><span id="gift-target-count" class="gift-target-count-badge hidden">0</span>
+        </button>
+        <button type="button" id="btn-close-gift" class="gift-close-btn" title="Close" aria-label="Close gift box">✕</button>
+      </div>
+    </div>
+
+    <!-- Kept in the DOM for existing renderer compatibility; visually removed from the sheet. -->
+    <div id="gift-level-card" class="gift-level-card gift-compat-hidden" aria-hidden="true">
+      <div id="gift-level-badge" class="level-badge gift-level-badge lvl-tier-1">
+        <span class="gift-level-badge-icon">💠</span>
+        <span id="gift-level-badge-text">Lv.1</span>
+      </div>
+      <div class="gift-level-progress-wrap">
+        <div class="gift-level-progress-track"><div id="gift-level-progress-fill" class="gift-level-progress-fill" style="width:0%"></div></div>
+        <div id="gift-level-remaining" class="gift-level-remaining">Need 0</div>
+      </div>
+    </div>
+
+    <div id="gift-target-panel" class="gift-target-panel hidden">
+      <div class="gift-target-head">
+        <label class="gift-select-all"><input type="checkbox" id="gift-target-select-all"><span>All Users</span></label>
+      </div>
+      <div id="gift-target-list" class="gift-target-list"></div>
+    </div>
+
+    <!-- Compatibility preview; selection still uses the same production renderer. -->
+    <div id="gift-preview" class="gift-preview hidden">
+      <span id="gift-preview-emoji" class="gift-preview-emoji"></span>
+      <div class="gift-preview-info"><span id="gift-preview-name"></span><span id="gift-preview-price"></span><small id="gift-preview-total"></small></div>
+    </div>
+
+    <div id="gift-catalog" class="gift-grid"></div>
+
+    <div class="gift-modal-footer">
+      <div class="gift-balance-pill" aria-label="Diamonds available">
+        <img src="/images/icons/icon-diamond-premium.png" class="currency-icon" alt="diamond">
+        <span id="gift-modal-diamonds">0</span>
+        <button type="button" id="btn-gift-recharge" class="gift-recharge-inline" title="Recharge">Recharge ›</button>
+      </div>
+      <div class="gift-send-combo" aria-label="Gift quantity and send controls">
+        <div id="gift-qty-row" class="gift-qty-row">
+          <button type="button" id="gift-qty-toggle" class="gift-qty-toggle" aria-haspopup="listbox" aria-expanded="false" title="Gift quantity">
+            <span id="gift-qty-current">x1</span><span class="gift-qty-chevron" aria-hidden="true">⌃</span>
+          </button>
+          <div id="gift-qty-menu" class="gift-qty-menu" role="listbox" aria-label="Gift quantity">
+            <button type="button" class="gift-qty-btn" role="option" aria-selected="true" data-qty="1">x1</button>
+            <button type="button" class="gift-qty-btn" role="option" aria-selected="false" data-qty="7">x7</button>
+            <button type="button" class="gift-qty-btn" role="option" aria-selected="false" data-qty="17">x17</button>
+            <button type="button" class="gift-qty-btn" role="option" aria-selected="false" data-qty="77">x77</button>
+            <button type="button" class="gift-qty-btn" role="option" aria-selected="false" data-qty="177">x177</button>
+            <button type="button" class="gift-qty-btn" role="option" aria-selected="false" data-qty="777">x777</button>
+            <button type="button" class="gift-qty-btn" role="option" aria-selected="false" data-qty="1717">x1717</button>
+          </div>
+        </div>
+        <button type="button" id="btn-send-gift" class="btn-send-gift" disabled aria-label="Send gift" title="Send gift">
+          <span class="btn-send-gift-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" role="img" aria-hidden="true"><path d="M20 12v8a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-8M3 8h18v4H3zM12 8v13M7.5 8C6.12 8 5 6.88 5 5.5S6.12 3 7.5 3C9.43 3 12 8 12 8M16.5 8C17.88 8 19 6.88 19 5.5 16.5 3 14.57 8 12 8" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          <span class="send-label">Send</span>
+          <span id="gift-send-count" class="gift-send-count" aria-live="polite">0</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- ============ MUSIC MODAL ============ -->
+<div id="modal-music" class="modal-overlay hidden">
+  <div class="modal-card">
+    <h3>Room Music</h3>
+    <div id="music-now-playing" class="hint">No song playing</div>
+    <div class="music-add-row">
+      <input id="music-file-input" type="file" accept="audio/*" class="field-solo">
+      <button id="btn-music-add" class="btn btn-primary" type="button">＋ Add</button>
+    </div>
+    <div id="music-playlist-list" class="music-playlist-list">
+      <div class="gift-target-empty">Playlist is empty</div>
+    </div>
+    <div class="modal-actions">
+      <button id="btn-music-playpause" class="btn btn-primary">Play / Pause</button>
+      <button id="btn-music-close-song" class="btn btn-ghost">Stop</button>
+      <button id="btn-close-music" class="btn btn-ghost">Close</button>
+    </div>
+    <audio id="room-audio" preload="none"></audio>
+  </div>
+</div>
+
+<!-- ============ YOUTUBE PLAY LIST MODAL ============ -->
+<div id="modal-yt-playlist" class="modal-overlay hidden">
+  <div class="modal-card">
+    <h3>Room Play List</h3>
+    <!-- Add-by-link row: only rendered visible for the room owner/admin via
+         JS (btn-yt-add / yt-add-row toggled with the same canControlYt flag
+         used for the player controls). -->
+    <div id="yt-add-row" class="yt-add-row hidden">
+      <input id="yt-link-input" type="text" placeholder="Paste YouTube Link..." class="field-solo">
+      <button id="btn-yt-add" class="btn btn-primary">Add</button>
+    </div>
+    <div id="yt-playlist-list" class="yt-playlist-list">
+      <div class="gift-target-empty">Playlist is empty</div>
+    </div>
+    <div class="modal-actions">
+      <button id="btn-close-yt-playlist" class="btn btn-ghost btn-block">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ROOM THEME (BACKGROUND) MODAL ============ -->
+<div id="modal-room-theme" class="modal-overlay hidden">
+  <div class="modal-card">
+    <h3>Room Theme</h3>
+    <p class="hint">Choosing an image shows a preview. Saving makes it visible to everyone and stores it on the server — Cancel leaves everything unchanged.</p>
+    <div id="theme-preview-wrap" class="theme-preview-wrap">
+      <img id="theme-preview-img" class="theme-preview-img" alt="Theme Preview">
+      <div id="theme-preview-empty" class="theme-preview-empty">No image selected</div>
+    </div>
+    <input id="theme-file-input" type="file" accept="image/*" class="field-solo">
+    <p class="field-label" style="margin-top:12px;">Or choose from the Theme Library</p>
+    <div id="theme-library-grid" class="theme-library-grid"></div>
+    <div id="theme-library-empty" class="theme-preview-empty hidden">Admin hasn't added any themes yet</div>
+    <div class="modal-actions">
+      <button id="btn-theme-save" class="btn btn-primary" disabled>Save</button>
+      <button id="btn-theme-cancel" class="btn btn-ghost">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ CHEST INFO MODAL ============ -->
+<div id="modal-chest-info" class="modal-overlay hidden">
+  <div class="modal-card">
+    <h3>🎁 Treasure Chest</h3>
+    <p class="hint">Sending a gift in the room adds its diamond value to the chest. When the level fills up, the chest opens and the Room Owner + Top 3 Gifters get rewards.</p>
+    <div id="chest-level-list" class="user-list"></div>
+    <button id="btn-close-chest-info" class="btn btn-ghost btn-block">Close</button>
+  </div>
+</div>
+
+<!-- ============ CHEST LIVE DETAILS ============ -->
+<div id="modal-chest-live" class="modal-overlay hidden">
+  <div class="modal-card chest-live-card">
+    <div class="chest-live-head">
+      <div><div class="chest-live-kicker">TREASURE CHEST</div><h3>Chest <span id="chest-live-level">LV.1</span></h3></div>
+      <button id="btn-close-chest-live" class="icon-btn">✕</button>
+    </div>
+    <div class="chest-live-hero">
+      <img id="chest-live-img" src="/images/chest-level-1.png" alt="Treasure Chest">
+      <div id="chest-live-countdown" class="chest-live-countdown">3</div>
+      <div class="chest-live-timer-label">NEXT RESET <b id="chest-live-reset">--:--:--</b></div>
+    </div>
+    <div class="chest-live-progress"><div id="chest-live-progress-fill"></div></div>
+    <div class="chest-live-progress-text"><span id="chest-live-contributed">0</span> / <span id="chest-live-target">0</span> Diamonds</div>
+    <div class="chest-rank-title">TOP REWARDS</div>
+    <div id="chest-rank-tabs" class="chest-rank-tabs" role="tablist" aria-label="Chest top rewards">
+      <button class="chest-rank-tab active" data-chest-rank="1" type="button" role="tab">Top 1</button>
+      <button class="chest-rank-tab" data-chest-rank="2" type="button" role="tab">Top 2</button>
+      <button class="chest-rank-tab" data-chest-rank="3" type="button" role="tab">Top 3</button>
+    </div>
+    <div id="chest-rank-cards" class="chest-rank-cards"></div>
+    <div class="chest-gifters-title">WHO GIFTED</div>
+    <div id="chest-live-gifters" class="chest-live-gifters"></div>
+  </div>
+</div>
+
+<!-- ============ CHEST OPENED / COUNTING ============ -->
+<div id="modal-chest-reward" class="modal-overlay hidden">
+  <div class="modal-card chest-reward-card chest-opened-card">
+    <div class="chest-reward-burst"></div>
+    <div id="chest-open-kicker" class="chest-open-kicker">CHEST OPENING</div>
+    <div id="chest-opener-name" class="chest-opener-name">A user</div>
+    <div id="chest-open-count" class="chest-open-count">3</div>
+    <div class="chest-open-label">GET READY…</div>
+    <div id="chest-reward-visual-wrap" class="chest-reward-visual-wrap">
+      <video id="chest-open-effect-video" class="chest-open-effect-video hidden" playsinline muted preload="auto" aria-hidden="true"></video>
+      <img id="chest-reward-mystery-img" class="chest-reward-mystery-img" src="/images/chest-mystery.png" alt="Mystery Chest">
+      <img id="chest-reward-reveal-img" class="chest-reward-reveal-img hidden" src="/images/chest-box.png" alt="Opened Chest">
+    </div>
+    <div id="chest-reward-level" class="chest-reward-level">LEVEL 1</div>
+    <div id="chest-reward-top" class="chest-reward-top"></div>
+    <button id="btn-close-chest-reward" class="btn btn-primary btn-block">Awesome!</button>
+  </div>
+</div>
+
+
+<!-- ============ COMPACT ROOM PROFILE SHEET ============
+     Opened by tapping the small room image/name/ID in the room header.
+     No visible X: tap the backdrop or use Android/browser Back to dismiss. -->
+<div id="sheet-room-profile" class="sheet-overlay hidden" aria-hidden="true">
+  <div class="sheet-backdrop" id="room-profile-backdrop"></div>
+  <div class="sheet-card room-profile-card" role="dialog" aria-modal="true" aria-label="Room Profile">
+    <div class="sheet-handle"></div>
+    <div class="room-profile-top">
+      <div class="room-profile-avatar-wrap">
+        <img id="room-profile-avatar" class="room-profile-avatar hidden" alt="Room">
+        <div id="room-profile-avatar-fallback" class="room-profile-avatar-fallback">🏛️</div>
+      </div>
+      <div class="room-profile-heading">
+        <h3 id="room-profile-name">Room</h3>
+        <div id="room-profile-id" class="room-profile-id">ID: —</div>
+      </div>
+      <button id="room-profile-settings" class="room-profile-settings" type="button" title="Room settings" aria-label="Room settings">
+        <img src="/images/pdf-assets/settings.png" alt="Settings">
+      </button>
+    </div>
+    <div class="room-profile-stats">
+      <div class="room-profile-stat"><strong id="room-profile-gifts">0</strong><span>🎁 Total Gifts</span></div>
+      <div class="room-profile-stat"><strong id="room-profile-diamonds">0</strong><span><img src="/images/icons/icon-diamond-premium.png" alt=""> Gift Value</span></div>
+      <div class="room-profile-stat"><strong id="room-profile-members">0</strong><span>👥 Members</span></div>
+    </div>
+    <div class="room-profile-meta">
+      <span id="room-profile-host">Host: —</span>
+      <span id="room-profile-country">India</span>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ROOM THREE-DOT ACTION SHEET ============ -->
+<div id="sheet-room-actions" class="sheet-overlay hidden" aria-hidden="true">
+  <div class="sheet-backdrop" id="room-actions-backdrop"></div>
+  <div class="sheet-card room-actions-card" role="dialog" aria-modal="true" aria-label="Room actions">
+    <div class="sheet-handle"></div>
+    <div class="room-actions-title">Room Actions</div>
+    <button id="room-action-profile" class="room-action-row" type="button"><span>🏠</span><b>Room Profile</b><span>›</span></button>
+    <button id="room-action-settings" class="room-action-row hidden" type="button"><span>⚙️</span><b>Settings</b><span>›</span></button>
+    <button id="room-action-keep" class="room-action-row" type="button"><span>⌂</span><b>Keep Room</b><span>›</span></button>
+    <button id="room-action-share" class="room-action-row" type="button"><span>↗</span><b>Share Room</b><span>›</span></button>
+    <button id="room-action-leave" class="room-action-row room-action-danger" type="button"><span>⏻</span><b>Leave Room</b><span>›</span></button>
+  </div>
+</div>
+
+<!-- ============ ROOM SETTINGS MODAL ============
+     Simplified: only Room Theme + Room Logo live here now. Kick, bulk
+     actions, mute, invite-to-seat, move-to-audience, admin grant/revoke,
+     chat clear and room close all moved to the touch-based ID Tap / Seat
+     Tap popups (#sheet-user-profile → #sheet-admin-grid, and the seat
+     tap handler for empty seats). The old controls are kept in the DOM
+     but hidden so app.js's existing element lookups / listeners for
+     them keep working without touching any other room logic. -->
+<div id="modal-room-mod" class="modal-overlay hidden">
+  <div class="modal-card">
+    <button id="btn-mod-x-close" class="modal-x-close" title="Close" aria-label="Close">✕</button>
+    <h3>Room Settings</h3>
+
+    <div class="mod-section room-logo-settings-section">
+      <p class="field-label">Room Logo / Icon</p>
+      <div class="room-settings-logo-row">
+        <div class="room-settings-logo-preview"><img id="mod-logo-preview" src="/images/room-default-logo.png" alt="Room Logo"></div>
+        <div class="room-settings-logo-actions">
+          <input id="mod-logo-input" type="file" accept="image/*" class="field-solo">
+          <button id="btn-mod-room-logo-reset" class="btn btn-ghost btn-block" type="button">Use Default Room Logo</button>
+        </div>
+      </div>
+      <small class="hint">Change the room logo independently from the user's profile frame.</small>
+    </div>
+
+    <div class="mod-section" id="mod-room-name-section">
+      <p class="field-label">Room Name</p>
+      <div class="mod-room-name-row">
+        <input id="mod-room-name-input" type="text" maxlength="60" placeholder="Room name" class="field-solo">
+        <button id="btn-mod-room-name-save" class="btn btn-primary">Save</button>
+      </div>
+      <small class="hint">Only the room owner can change this name.</small>
+    </div>
+
+    <div class="mod-section">
+      <p class="field-label">Room Theme (Background)</p>
+      <button id="btn-open-room-theme" class="btn btn-primary btn-block" type="button">Upload / Change Theme</button>
+      <small class="hint">Choose an uploaded background or an Admin Theme Library theme. Changes are saved for everyone in the room.</small>
+    </div>
+
+    <div class="mod-section" id="mod-seat-lock-section">
+      <p class="field-label">🎙️ Seat Management</p>
+      <div id="seat-lock-row" class="seat-lock-settings-grid"></div>
+      <small class="hint">Tap a seat number to lock or unlock it. Honor Seat #1 is reserved for the room owner/admin.</small>
+    </div>
+
+    <div class="mod-section room-settings-quick-actions">
+      <p class="field-label">⚡ Quick Controls</p>
+      <div class="room-settings-action-grid">
+        <button id="btn-settings-invite-seat" class="btn btn-ghost" type="button">📩 Invite to Seat</button>
+        <button id="btn-settings-level" class="btn btn-ghost" type="button">⭐ Level</button>
+        <button id="btn-settings-cp" class="btn btn-ghost" type="button">💞 CP Center</button>
+        <button id="btn-settings-admins" class="btn btn-ghost" type="button">🛡️ Admin Management</button>
+      </div>
+      <small class="hint">These controls use the existing room/member permissions and server-side actions.</small>
+    </div>
+
+    <div id="mod-room-lock-section" class="mod-section hidden">
+      <p class="field-label">🔒 Room Lock</p>
+      <label class="logout-lock-row" title="When ON, no one can enter the room without a password">
+        <span>Lock room with password</span>
+        <input type="checkbox" id="mod-room-lock-toggle">
+      </label>
+      <input id="mod-room-lock-password" type="password" placeholder="Room Password" class="field-solo hidden">
+      <button id="btn-mod-room-lock-save" class="btn btn-primary btn-block">Save</button>
+    </div>
+
+    <button id="btn-close-mod" class="btn btn-ghost btn-block">Close</button>
+
+    <div class="hidden" aria-hidden="true">
+      <div id="legacy-seat-lock-row"></div>
+      <select id="mod-kick-select"></select>
+      <button id="btn-mod-kick"></button>
+      <input type="checkbox" id="mod-bulk-select-all">
+      <div id="mod-bulk-list"></div>
+      <select id="mod-bulk-mute-minutes">
+        <option value="5">5</option><option value="15">15</option><option value="60">60</option><option value="0">0</option>
+      </select>
+      <button id="btn-mod-bulk-mute"></button>
+      <button id="btn-mod-bulk-invite"></button>
+      <button id="btn-mod-bulk-audience"></button>
+      <input id="mod-bulk-label-text">
+      <button id="btn-mod-bulk-label"></button>
+      <input id="mod-bulk-announce-text">
+      <button id="btn-mod-bulk-announce"></button>
+      <select id="mod-admin-select"></select>
+      <button id="btn-mod-make-admin"></button>
+      <button id="btn-mod-remove-admin"></button>
+      <button id="btn-mod-clear-chat"></button>
+      <button id="btn-mod-close-room"></button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ROOM RANKING POPUP ============ -->
+<div id="modal-room-ranking" class="modal-overlay hidden">
+  <div class="modal-card">
+    <button id="btn-ranking-x-close" class="modal-x-close" title="Close" aria-label="Close">✕</button>
+    <h3><img class="ranking-title-cup" src="/images/rankings/room-ranking-cup.png" alt=""> Room Ranking</h3>
+    <div class="social-tabs" id="ranking-tabs">
+      <button class="social-tab active" data-period="daily" type="button">Daily</button>
+      <button class="social-tab" data-period="weekly" type="button">Weekly</button>
+      <button class="social-tab" data-period="monthly" type="button">Monthly</button>
+    </div>
+    <div id="ranking-list" class="user-list"></div>
+    <div id="ranking-empty" class="hint hidden">No one has sent a gift yet.</div>
+  </div>
+</div>
+
+<!-- ============ GIFT BOX / LEVEL INFORMATION POPUP ============ -->
+<!-- Level increases ONLY from successfully sending gifts inside a room —
+     see idLevel.js. This popup is a pure read-out of that: current level,
+     lifetime gift sent, next level, remaining gift value, and a progress
+     bar. It never writes anything itself.
+     UPGRADE (2026-08-04, Level Management): now also shows the current
+     group's theme (badge PNG behind the level number, group name, gradient
+     background) and a small "next badge" preview when the next level is in
+     a different group — all populated from idLevel.js's per-group theme,
+     live-updated app-wide the instant an admin saves a new theme (see
+     "level-theme-update" socket listener in app.js). -->
+<div id="modal-level-info" class="modal-overlay hidden">
+  <div class="modal-card">
+    <button id="btn-level-info-x-close" class="modal-x-close" title="Close" aria-label="Close">✕</button>
+    <h3>⭐ My Level</h3>
+    <div class="level-info-current" id="level-info-current-panel">
+      <div class="rank-badge rank-top1 level-info-badge-wrap" id="level-info-badge-wrap">
+        <img id="level-info-badge-img" class="level-info-badge-img hidden" alt="">
+        <span id="level-info-badge">0</span>
+      </div>
+      <div>
+        <div class="level-info-current-label" id="level-info-group-label">Current Level</div>
+        <div class="level-info-current-value" id="level-info-current-level">Level 0</div>
+      </div>
+    </div>
+    <div class="level-info-row">
+      <span>Lifetime Gift Sent</span>
+      <span id="level-info-lifetime">0</span>
+    </div>
+    <div id="level-info-next-wrap">
+      <div class="level-info-row">
+        <span>Next Level</span>
+        <span id="level-info-next-level">—</span>
+      </div>
+      <div class="level-info-progress-track">
+        <div class="level-info-progress-fill" id="level-info-progress-fill" style="width:0%"></div>
+      </div>
+      <div class="hint" id="level-info-remaining">Need XXXXX more gift value to reach the next level.</div>
+      <div class="level-info-next-badge-preview hidden" id="level-info-next-badge-wrap">
+        <img id="level-info-next-badge-img" class="level-info-badge-img-sm hidden" alt="">
+        <span class="hint">Next Badge: <b id="level-info-next-group-label">—</b></span>
+      </div>
+    </div>
+    <div class="hint hidden" id="level-info-max">🏆 Max Level reached!</div>
+  </div>
+</div>
+
+<div id="modal-online-members" class="modal-overlay hidden">
+  <div class="modal-card">
+    <h3>Online in Room</h3>
+    <div id="online-members-list" class="gift-target-list"></div>
+    <button id="btn-close-online-members" class="btn btn-ghost btn-block">Close</button>
+  </div>
+</div>
+
+<div id="modal-room-password" class="modal-overlay hidden">
+  <div class="modal-card">
+    <h3>Room is Locked</h3>
+    <p class="field-label">Enter password to join</p>
+    <input id="room-password-input" type="password" class="field-solo" placeholder="Password" maxlength="32" autocomplete="off">
+    <div class="modal-actions">
+      <button id="btn-room-password-submit" class="btn btn-primary">Enter</button>
+      <button id="btn-room-password-cancel" class="btn btn-ghost">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ USER PROFILE BOTTOM SHEET (seat/member tap) ============ -->
+<div id="sheet-user-profile" class="sheet-overlay hidden">
+  <div class="sheet-backdrop" id="sheet-backdrop"></div>
+  <div class="sheet-card">
+    <div class="sheet-handle"></div>
+
+    <!-- CP PAIR VIEW: two independent real profiles; never overlays one photo on the other. -->
+    <div id="sheet-cp-pair" class="sheet-cp-pair hidden" aria-hidden="true">
+      <div class="sheet-cp-person" id="sheet-cp-left-person"></div>
+      <div class="sheet-cp-heart-wrap" aria-hidden="true">
+        <img class="sheet-cp-heart" src="/images/relationships/cp-profile-heart.png" alt="CP">
+      </div>
+      <div class="sheet-cp-person" id="sheet-cp-right-person"></div>
+    </div>
+
+    <div class="sheet-profile-header" id="sheet-normal-profile-header">
+      <div class="avatar-frame-wrap avatar-frame-md" id="sheet-avatar-frame">
+        <img id="sheet-avatar" class="avatar avatar-md" src="" alt="">
+        <div id="sheet-cp-profile-composite" class="cp-profile-composite hidden" aria-hidden="true">
+          <img id="sheet-cp-primary-avatar" class="cp-profile-primary-avatar" src="" alt="Profile photo">
+          <img class="cp-profile-heart" src="/images/relationships/cp-profile-heart.png" alt="CP">
+          <img id="sheet-cp-partner-avatar" class="cp-profile-partner-avatar" src="" alt="CP partner">
+        </div>
+      </div>
+      <div class="sheet-profile-info">
+        <div class="sheet-name-row">
+          <h3 id="sheet-name"></h3>
+        </div>
+        <div class="sheet-badge-row">
+          <span id="sheet-role-badge" class="room-role-badge hidden"></span>
+          <span id="sheet-vip-badge" class="vip-badge vip-0 hidden"></span>
+          <img id="sheet-svip-tag" class="svip-tag-img hidden" alt="SVIP">
+          <span class="tag-row-break">
+            <img id="sheet-agency-tag" class="svip-tag-img hidden" alt="Agency Tag">
+            <img id="sheet-seller-tag" class="svip-tag-img hidden" alt="Seller">
+            <img id="sheet-official-tag" class="svip-tag-img hidden" alt="Official">
+            <img id="sheet-merchant-tag" class="svip-tag-img hidden merchant-profile-tag" alt="Merchant">
+          </span>
+          <span id="sheet-seller-badge" class="seller-badge hidden">Seller</span>
+          <span id="sheet-tag-badge" class="tag-badge hidden"></span>
+          <span id="sheet-agency-badge" class="agency-badge-image hidden agency-badge-image-sm" aria-label="Active Agency"></span>
+        </div>
+        <div class="sheet-sub-row">
+          <span>ID: <span id="sheet-userid"></span></span>
+          <span class="room-level-badge room-level-badge-inline" id="sheet-level-chip"></span>
+          <span id="sheet-followers-row">👥 <span id="sheet-followers">0</span> Followers</span>
+        </div>
+        <p id="sheet-bio" class="sheet-bio hidden"></p>
+      </div>
+    </div>
+
+    <div class="sheet-actions-row" id="sheet-quick-actions">
+      <button id="sheet-btn-profile" class="btn btn-ghost btn-sm">Profile</button>
+      <button id="sheet-btn-chat" class="btn btn-ghost btn-sm">Chat</button>
+      <button id="sheet-btn-mention" class="btn btn-ghost btn-sm">@ Mention</button>
+    </div>
+
+    <div class="relationship-actions hidden" id="sheet-relationship-actions">
+      <button id="sheet-btn-friendship" class="relationship-btn relationship-btn-friendship" type="button">🤝 Friendship</button>
+      <button id="sheet-btn-unfriend" class="relationship-btn relationship-btn-unfriend hidden" type="button">💔 Unfriend</button>
+      <button id="sheet-btn-cp" class="relationship-btn relationship-btn-cp" type="button">💞 CP</button>
+      <button id="sheet-btn-uncp" class="relationship-btn relationship-btn-unfriend hidden" type="button">💔 UnCP</button>
+    </div>
+    <div id="sheet-relationship-status" class="relationship-profile-status hidden"></div>
+
+    <div class="sheet-section hidden" id="sheet-admin-section">
+      <p class="field-label">Admin Controls</p>
+      <div class="sheet-admin-grid" id="sheet-admin-grid"></div>
+    </div>
+
+    <div class="sheet-bottom-actions hidden" id="sheet-bottom-actions">
+      <button id="sheet-btn-follow" class="btn btn-primary btn-block">Follow</button>
+      <button id="sheet-btn-gift" class="btn btn-accent btn-block">🎁 Send Gift</button>
+    </div>
+
+    <div class="sheet-bottom-actions hidden" id="sheet-own-actions">
+      <button id="sheet-btn-leave-seat" class="btn btn-ghost btn-block">Leave Seat</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PROFILE ============ -->
+<section id="view-profile" class="view pp-profile-skin">
+  <div class="pp-profile-shell">
+    <div class="pp-profile-hero">
+      <header class="pp-profile-header">
+        <div class="pp-header-spacer" aria-hidden="true"></div>
+        <h2>Me</h2>
+        <label class="logout-lock-row pp-logout-lock" title="When ON, this ID will never log out until you tap Logout yourself">
+          <span>🔒</span>
+          <input id="toggle-logout-lock" type="checkbox">
+        </label>
+        <label id="row-godpower-invisible" class="logout-lock-row hidden" title="When ON, you won't appear in the Member/Online list, but voice/seat stay normal">
+          <span>👻</span><input id="toggle-godpower-invisible" type="checkbox">
+        </label>
+      </header>
+
+      <div class="pp-profile-cover-tools">
+        <label class="pp-cover-change" for="profile-background-input" title="Change profile background">
+          <span>✦</span> Change Background
+        </label>
+        <input id="profile-background-input" type="file" accept="image/*" class="hidden">
+      </div>
+
+      <div class="pp-profile-main">
+        <div class="pp-avatar-column">
+          <div class="pp-profile-avatar-frame-stack">
+            <div class="avatar-upload-wrap avatar-frame-wrap avatar-frame-lg pp-avatar-ring" id="profile-avatar-frame">
+              <img id="profile-avatar" class="avatar avatar-lg pp-avatar" src="" alt="Profile photo">
+              <label for="profile-photo-input" class="avatar-edit-btn pp-avatar-edit" aria-label="Change profile photo">✎</label>
+              <input id="profile-photo-input" type="file" accept="image/*" class="hidden">
+            </div>
+            <div id="profile-frame-countdown" class="profile-frame-countdown hidden"></div>
+          </div>
+        </div>
+
+        <div class="pp-profile-info">
+          <div class="pp-name-line">
+            <h2 id="profile-name-display" class="pp-name">User</h2>
+          </div>
+          <button id="menu-edit-profile" type="button" class="pp-edit-link">
+            <span>View or edit your profile</span><span>›</span>
+          </button>
+          <div class="pp-id-line">
+            <span class="pp-id-badge">ID</span>
+            <span id="profile-userid" class="pp-id-value"></span>
+            <button id="btn-copy-id" type="button" class="pp-copy-btn" title="Copy ID" aria-label="Copy ID">⧉</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="pp-stats">
+        <button type="button" class="pp-stat" data-follow-list="followers">
+          <strong id="profile-followers">0</strong><span>Followers</span>
+        </button>
+        <i></i>
+        <button type="button" class="pp-stat" data-follow-list="following">
+          <strong id="profile-following">0</strong><span>Following</span>
+        </button>
+        <i></i>
+        <button type="button" class="pp-stat">
+          <strong id="profile-visitors">0</strong><span>Visitors</span>
+        </button>
+      </div>
+
+      <div class="pp-badges">
+        <span id="profile-vip-badge" class="vip-badge vip-0 pp-vip">VIP 0</span>
+        <span id="profile-level-badge" class="room-level-badge pp-level"></span>
+        <img id="profile-svip-tag" class="svip-tag-img hidden pp-svip" alt="SVIP">
+        <span class="tag-row-break">
+          <img id="profile-agency-tag" class="svip-tag-img hidden pp-svip" alt="Agency Tag">
+          <img id="profile-seller-tag" class="svip-tag-img hidden pp-svip" alt="Seller">
+          <img id="profile-official-tag" class="svip-tag-img hidden pp-svip" alt="Official">
+          <img id="profile-merchant-tag" class="svip-tag-img hidden pp-svip merchant-profile-tag" alt="Merchant">
+        </span>
+        <span id="profile-seller-badge" class="seller-badge hidden pp-seller">Seller</span>
+        <span id="profile-tag-badge" class="tag-badge hidden pp-custom-tag"></span>
+        <span id="profile-agency-badge" class="agency-badge-image hidden" aria-label="Active Agency"></span>
+        <span id="pp-gender-badge" class="pp-gender">♂</span>
+        <span id="pp-country-badge" class="pp-country">🇮🇳</span>
+      </div>
+    </div>
+
+    <div class="pp-menu-card">
+      <button id="menu-wallet" class="pp-menu-row" type="button">
+        <span class="pp-menu-icon pp-wallet-icon"><img src="/images/icons/icon-wallet-premium.png" alt="Wallet"></span>
+        <span class="pp-menu-label">Wallet</span>
+        <span class="pp-menu-values">
+          <span class="pp-coin"><img src="/images/icons/icon-diamond-premium.png" alt="Diamond"> <b id="menu-wallet-diamonds">0</b></span>
+          <span class="pp-beans"><img src="/images/icons/icon-beans.jpg" alt="Beans"> <b id="menu-wallet-beans">0</b></span>
+          <span class="pp-arrow">›</span>
+        </span>
+      </button>
+
+      <div class="pp-divider"></div>
+
+      <button id="menu-svip" class="pp-menu-row pp-svip-menu-row" type="button">
+        <span class="pp-menu-icon pp-premium-sbi-icon"><img src="/images/icons/icon-sbi-premium.png" alt="SBI Premium"></span>
+        <span class="pp-menu-label">SVIP</span>
+        <span class="pp-menu-side-link" id="menu-svip-progress">Recharge 1,500,000 <img src="/images/icons/icon-diamond-premium.png" class="svip-inline-diamond" alt=""> → SVIP1</span><span class="pp-arrow">›</span>
+      </button>
+
+      <div class="pp-divider"></div>
+
+      <button id="menu-cp-center" class="pp-menu-row pp-cp-menu-row" type="button">
+        <span class="pp-menu-icon pp-cp-center-icon"><img src="/images/icons/icon-cp-heart-center.png" alt="CP"></span>
+        <span class="pp-menu-label">CP</span>
+        <span class="pp-menu-side-link pp-cp-side" id="menu-cp-summary">Invite your CP</span><span class="pp-arrow">›</span>
+      </button>
+
+      <div class="pp-divider"></div>
+      <div class="pp-divider"></div>
+
+      <button id="menu-frames" class="pp-menu-row" type="button">
+        <span class="pp-menu-icon pp-menu-icon-image"><img src="/images/icons/icon-shop-premium.png" alt="Shop"></span>
+        <span class="pp-menu-label">Shop</span><span class="pp-arrow">›</span>
+      </button>
+
+      <div class="pp-divider"></div>
+
+      <button id="menu-diamond-center" class="pp-menu-row hidden" type="button">
+        <span class="pp-menu-icon pp-menu-icon-image"><img src="/images/icons/icon-diamond-premium.png" alt="Diamond Center"></span>
+        <span class="pp-menu-label">Diamond Center</span><span class="pp-arrow">›</span>
+      </button>
+
+      <div class="pp-divider menu-diamond-center-divider hidden"></div>
+
+      <button id="menu-host-center" class="pp-menu-row hidden" type="button">
+        <span class="pp-menu-icon pp-orange">♟</span>
+        <span class="pp-menu-label">Host Center</span><span class="pp-arrow">›</span>
+      </button>
+
+      <div class="pp-divider menu-host-center-divider hidden"></div>
+
+      <button id="menu-level" class="pp-menu-row" type="button">
+        <span class="pp-menu-icon pp-menu-icon-image"><img src="/images/icons/icon-level-premium.png" alt="Level"></span>
+        <span class="pp-menu-label">Level</span><span class="pp-arrow">›</span>
+      </button>
+
+      <div class="pp-divider"></div>
+
+      <button id="menu-daily-tasks" class="pp-menu-row" type="button">
+        <span class="pp-menu-icon pp-menu-icon-image"><img src="/images/icons/icon-daily-tasks-premium.png" alt="Daily Tasks"></span>
+        <span class="pp-menu-label">Daily Tasks</span><span class="pp-menu-side-link">Free Exchange Rewards</span><span class="pp-arrow">›</span>
+      </button>
+
+      <div class="pp-divider"></div>
+
+      <button id="menu-help-feedback" class="pp-menu-row" type="button">
+        <span class="pp-menu-icon pp-orange">❓</span>
+        <span class="pp-menu-label">Help and feedback</span><span class="pp-arrow">›</span>
+      </button>
+
+      <div class="pp-divider"></div>
+
+      <button id="menu-settings" class="pp-menu-row" type="button">
+        <span class="pp-menu-icon pp-orange"><img src="/images/pdf-assets/settings.png" class="pp-pdf-settings-icon" alt=""></span>
+        <span class="pp-menu-label">Settings</span><span class="pp-arrow">›</span>
+      </button>
+    </div>
+
+    <div id="profile-edit-panel" class="auth-card hidden pp-edit-panel">
+      <label class="field-label" for="profile-name-input">Name</label>
+      <input id="profile-name-input" type="text" class="field-solo" placeholder="Your name" maxlength="40" autocomplete="nickname">
+      <label class="field-label" for="profile-bio-input">Bio</label>
+      <textarea id="profile-bio-input" placeholder="Write a bio..." class="field-solo" maxlength="160" rows="3"></textarea>
+      <button id="btn-save-profile" class="btn btn-primary btn-block" type="button">Save</button>
+    </div>
+
+    <nav class="bottom-nav">
+      <button class="nav-btn" data-nav="home"><img class="nav-icon-custom" src="/images/icons/custom-nav/nav-home.png" alt="Home" draggable="false"><span data-i18n="nav_home">Home</span></button>
+      <button class="nav-btn inbox-nav-btn" data-nav="inbox"><span class="inbox-unread-badge hidden">0</span><img class="nav-icon-custom" src="/images/icons/custom-nav/nav-inbox.png" alt="Inbox" draggable="false"><span data-i18n="nav_inbox">Message</span></button>
+      <button class="nav-btn active" data-nav="profile"><img class="nav-icon-custom" src="/images/icons/custom-nav/nav-profile.png" alt="Profile" draggable="false"><span data-i18n="nav_profile">Me</span></button>
+    </nav>
+  </div>
+</section>
+
+<!-- ============ SVIP CENTER ============ -->
+<section id="view-svip-center" class="view pp-subscreen">
+  <header class="pp-sub-header"><button id="btn-svip-back" class="icon-btn" type="button">←</button><h2>SVIP Settings</h2><span></span></header>
+  <div class="pp-sub-content pp-svip-content">
+    <div class="svip-hero-card">
+      <div class="svip-hero-top"><div><div class="pp-sub-kicker">Current SVIP</div><div id="svip-center-level" class="svip-level-title">SVIP 0</div><div id="svip-center-expiry" class="svip-expiry">No active SVIP entitlement</div></div><div class="svip-crown"><img src="/images/icons/icon-sbi-premium.png" alt="SBI Premium"></div></div>
+      <div id="svip-center-total" class="svip-recharge-total">0 <span><img src="/images/icons/icon-diamond-premium.png" class="svip-inline-diamond" alt=""> cumulative recharge</span></div>
+      <div class="svip-progress-track"><div id="svip-center-progress-bar" class="svip-progress-bar"></div></div>
+      <div class="svip-progress-meta"><span id="svip-center-remaining">1,500,000 <img src="/images/icons/icon-diamond-premium.png" class="svip-inline-diamond" alt=""> remaining to next level</span><b id="svip-center-next">Next: 1,500,000 <img src="/images/icons/icon-diamond-premium.png" class="svip-inline-diamond" alt=""></b></div>
+      <p class="svip-note">SVIP level is based on your cumulative successful Diamond recharge. The current balance in your Wallet is separate; recharges increase this cumulative SVIP total.</p>
+    </div>
+
+    <div class="pp-info-card"><div class="pp-card-title-row"><h3>SVIP Privileges</h3><span class="pp-reward-pill">Cumulative</span></div><div id="svip-feature-list" class="svip-feature-list"></div></div>
+
+    <div class="pp-info-card svip-action-card">
+      <h3>Super Privilege</h3>
+      <div class="svip-action-block"><div><b>🔓 Unban Account</b><small id="svip-unban-quota">0 / 0 Unban applications this month</small></div><div class="svip-id-row"><input id="svip-unban-user-id" class="field-solo" inputmode="numeric" placeholder="Target User ID"><button id="btn-svip-unban" class="btn btn-primary" type="button">Apply</button></div><p>SVIP8+ can submit an application for a currently banned User ID. Applications are reviewed by authorized staff; approval is not automatic.</p></div>
+      <div class="svip-action-block"><div><b>🆔 SID</b><small id="svip-sid-current">Not set</small></div><div class="svip-id-row"><input id="svip-sid-input" class="field-solo" inputmode="numeric" maxlength="12" placeholder="4–12 digit SID"><button id="btn-svip-sid" class="btn btn-primary" type="button">Apply</button></div><p>SVIP8+ can request a unique numeric SID. The server checks uniqueness and authorized review is required.</p></div>
+      <div class="svip-action-block"><div><b>⛔ Ban Account</b><small id="svip-ban-quota">0 / 0 Ban actions this month</small></div><div class="svip-id-row"><input id="svip-ban-user-id" class="field-solo" inputmode="numeric" placeholder="Target User ID"><button id="btn-svip-ban" class="btn btn-primary" type="button">Ban 24h</button></div><p>SVIP10+ can apply the documented 24-hour account-ban privilege within the monthly quota. Protected accounts and wealth level above 5 are excluded.</p></div>
+    </div>
+
+    <div class="pp-info-card"><h3>SVIP Level Benefits</h3><div class="svip-benefit-table">
+      <div><b>SVIP1</b><span>Visitor details</span></div><div><b>SVIP3</b><span>Hide Last Online</span></div><div><b>SVIP4</b><span>Anti-Tracking</span></div><div><b>SVIP7</b><span>Hide Online Status</span></div><div><b>SVIP8</b><span>Unban Account · SID</span></div><div><b>SVIP9</b><span>Anonymous Ranking</span></div><div><b>SVIP10</b><span>Ban Account · 3 monthly actions</span></div><div><b>SVIP11</b><span>Room Secret Lord · 6 monthly ban actions</span></div><div><b>SVIP12</b><span>10 monthly ban actions</span></div>
+    </div></div>
+  </div>
+</section>
+
+<!-- ============ CP CENTER ============ -->
+<section id="view-cp-center" class="view pp-subscreen pp-cp-center-screen">
+  <header class="pp-sub-header pp-cp-header"><button id="btn-cp-center-back" class="icon-btn" type="button">←</button><h2>CP Center</h2><button id="btn-cp-help" class="pp-cp-help" type="button">?</button></header>
+  <div class="pp-cp-center-content">
+    <div class="pp-cp-hero">
+      <div class="pp-cp-glow"></div>
+      <div class="pp-cp-pair" id="cp-center-pair">
+        <div class="pp-cp-person" id="cp-center-me-block">
+          <div class="pp-cp-avatar-ring"><img id="cp-center-me-avatar" src="" alt="Your profile"></div>
+          <div id="cp-center-me-name" class="pp-cp-name">You</div>
+          <div class="pp-cp-id" id="cp-center-me-id">ID: —</div>
+          <div class="pp-cp-tags" id="cp-center-me-tags"></div>
+        </div>
+        <div class="pp-cp-heart-wrap">
+          <div class="pp-cp-heart-halo" aria-hidden="true"></div>
+          <img id="cp-center-heart" src="/images/relationships/cp-center-heart.png" alt="CP Heart" class="pp-cp-heart-art">
+          <div class="pp-cp-heart-cover" aria-hidden="true"></div>
+          <div class="pp-cp-days" id="cp-center-days">0</div>
+          <div class="pp-cp-days-label">DAYS</div>
+          <div class="pp-cp-level" id="cp-center-level">LV 0</div>
+        </div>
+        <div class="pp-cp-person pp-cp-empty-person" id="cp-center-partner-block">
+          <div class="pp-cp-avatar-ring pp-cp-empty-avatar"><span>+</span></div>
+          <div class="pp-cp-name" id="cp-center-partner-name">Invite</div>
+          <div class="pp-cp-id" id="cp-center-partner-id">ID: —</div>
+          <div class="pp-cp-tags" id="cp-center-partner-tags"></div>
+        </div>
+      </div>
+      <div class="pp-cp-bond-line" id="cp-center-bond-line">Bond Level • 0 • Together for 0 days</div>
+      <div id="cp-center-status" class="pp-cp-status">You don’t have CP yet.</div>
+      <div class="pp-cp-actions"><button id="btn-cp-invite-scroll" class="pp-cp-invite-main" type="button">Invite CP</button><button id="btn-cp-end" class="pp-cp-invite-main pp-cp-end hidden" type="button">💔 End CP</button></div>
+    </div>
+    <div class="pp-cp-section-card">
+      <div class="pp-cp-section-title">Invite a CP</div>
+      <div class="pp-cp-section-subtitle">Choose someone from your Following list</div>
+      <div class="pp-cp-search"><span>⌕</span><input id="cp-center-search" type="search" placeholder="Enter ID or search name"></div>
+      <div id="cp-center-following-list" class="pp-cp-following-list"></div>
+      <div id="cp-center-following-empty" class="pp-cp-empty-list hidden">No Following users available for a CP invite.</div>
+    </div>
+    <div class="pp-cp-section-card pp-cp-info-card">
+      <div class="pp-cp-section-title">CP Icon</div>
+      <div class="pp-cp-icon-preview"><img src="/images/relationships/cp-center-heart.png" alt="CP Icon"></div>
+      <div class="pp-cp-section-title pp-cp-subsection-title">CP status</div>
+      <p>When a CP request is accepted, the two profile photos appear on both sides of the crystal heart. The day counter starts from the accepted time and updates automatically.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PROFILE LEVEL ============ -->
+<section id="view-profile-level" class="view pp-subscreen">
+  <header class="pp-sub-header"><button class="icon-btn" data-back="view-profile">←</button><h2>Level</h2><span></span></header>
+  <div class="pp-sub-content">
+    <div class="pp-level-hero-card"><div class="pp-level-star">⭐</div><div><div class="pp-sub-kicker">Current Level</div><div id="profile-level-title" class="pp-level-number">Level 0</div><div id="profile-level-progress" class="pp-level-progress-text">Loading…</div></div></div>
+    <div class="pp-info-card"><h3>Level benefits</h3><p>Your level is based on your verified account activity and the existing PingPong level system.</p><div id="profile-level-details"></div></div>
+  </div>
+</section>
+
+<!-- ============ DAILY TASKS ============ -->
+<section id="view-daily-tasks" class="view pp-subscreen">
+  <header class="pp-sub-header"><button class="icon-btn" data-back="view-profile">←</button><h2>Daily Tasks</h2><span></span></header>
+  <div class="pp-sub-content">
+    <div class="pp-info-card"><div class="pp-card-title-row"><h3>Daily Tasks</h3><span class="pp-reward-pill">Free Exchange Rewards</span></div><p>Only server-verified rewards are shown here. Claim the check-in reward when eligible; room-owner gift bonus is calculated from real gifts.</p><div class="pp-task-list"><div class="pp-task-row"><span class="pp-menu-icon-image"><img src="/images/icons/icon-diamond-premium.png" alt="Diamonds" style="width:24px;height:24px;object-fit:contain"></span><div><b>Daily check-in</b><small id="daily-task-reward-status">Claim your daily reward here. The next reward unlocks after a 12-hour cooldown.</small></div><button id="btn-daily-treasure" class="btn btn-ghost">Claim</button></div><div class="pp-task-row"><span class="pp-menu-icon-image"><img src="/images/icons/icon-diamond-premium.png" alt="Diamonds" style="width:24px;height:24px;object-fit:contain"></span><div><b>Room Bonus · 2%</b><small id="room-gift-bonus-status">2% of eligible gifts sent in your room is reserved for the room owner and credited to their diamond wallet after midnight (India time).</small></div><span class="pp-task-status">Automatic</span></div></div></div>
+  </div>
+</section>
+
+<!-- ============ HELP & FEEDBACK ============ -->
+<section id="view-help-feedback" class="view pp-subscreen">
+  <header class="pp-sub-header"><button class="icon-btn" data-back="view-profile">←</button><h2>Help and feedback</h2><span></span></header>
+  <div class="pp-sub-content">
+    <button class="pp-action-card" id="help-customer-service"><span>🎧</span><div><b>Customer Service</b><small>Get help with account, room, wallet or technical issues.</small></div><span>›</span></button>
+    <button class="pp-action-card" id="help-my-feedback"><span>📝</span><div><b>My Feedback</b><small>Send feedback about your PingPong experience.</small></div><span>›</span></button>
+    <div class="pp-info-card"><h3>Frequently asked questions</h3><details><summary>Why did my session expire?</summary><p>For security, expired or revoked sessions require you to authenticate again.</p></details><details><summary>How do I report a room or user?</summary><p>Use the in-room moderation/report controls or contact Customer Service.</p></details><details><summary>Where can I find my ID?</summary><p>Your ID is shown at the top of your Profile screen.</p></details></div>
+  </div>
+</section>
+
+<!-- ============ SETTINGS ============ -->
+<section id="view-settings" class="view pp-subscreen">
+  <header class="pp-sub-header"><button class="icon-btn" data-back="view-profile">←</button><h2>Settings</h2><span></span></header>
+  <div class="pp-sub-content pp-settings-content">
+    <div class="pp-settings-group">
+      <button class="pp-settings-row" id="settings-privacy"><span>🛡️</span><b>Privacy Settings</b><span class="pp-settings-chevron">›</span></button>
+      <div class="pp-settings-row"><span>🔔</span><b>Push Notification</b><label class="pp-switch"><input id="settings-push-toggle" type="checkbox"><i></i></label></div>
+      <button class="pp-settings-row" id="settings-cache"><span>🧹</span><b>Clean Cache</b><small id="settings-cache-size">Calculating…</small><span class="pp-settings-chevron">›</span></button>
+      <button class="pp-settings-row" id="settings-sanitize"><span>⚖️</span><b>Sanitize room</b><span class="pp-settings-chevron">›</span></button>
+      <button class="pp-settings-row" id="settings-delete-account"><span>🗑️</span><b>Delete Account</b><span class="pp-settings-chevron">›</span></button>
+    </div>
+    <div class="pp-settings-group">
+      <button class="pp-settings-row pp-settings-row-flat" data-policy="Terms of Service"><b>Terms of Service</b><span class="pp-settings-chevron">›</span></button>
+      <button class="pp-settings-row pp-settings-row-flat" data-policy="Privacy Policy"><b>Privacy Policy</b><span class="pp-settings-chevron">›</span></button>
+      <button class="pp-settings-row pp-settings-row-flat" data-policy="Community Policy"><b>Community Policy</b><span class="pp-settings-chevron">›</span></button>
+      <button class="pp-settings-row pp-settings-row-flat" data-policy="Refund Policy"><b>Refund Policy</b><span class="pp-settings-chevron">›</span></button>
+      <button class="pp-settings-row pp-settings-row-flat" data-policy="Intellectual Property Rights"><b>Intellectual Property Rights</b><span class="pp-settings-chevron">›</span></button>
+      <button class="pp-settings-row pp-settings-row-flat" data-policy="Safety & Blocking"><b>Safety & Blocking</b><span class="pp-settings-chevron">›</span></button>
+      <button class="pp-settings-row pp-settings-row-flat" data-policy="Payments & Virtual Items"><b>Payments & Virtual Items</b><span class="pp-settings-chevron">›</span></button>
+      <button class="pp-settings-row pp-settings-row-flat" data-policy="Data & Account"><b>Data & Account</b><span class="pp-settings-chevron">›</span></button>
+      <button class="pp-settings-row pp-settings-row-flat" id="settings-power-code" type="button"><span>⚡</span><div style="flex:1;text-align:left"><b>Activate Power Code</b><small>Use an authorized Power Code for all-room controls.</small></div><span class="pp-settings-chevron">›</span></button>
+      <button class="pp-settings-row pp-settings-row-flat" id="settings-about" type="button"><b>About PingPong</b><span class="pp-settings-chevron">›</span></button>
+      <button class="pp-settings-row pp-settings-row-flat" id="settings-feedback" type="button"><b>Feedback & Support</b><span class="pp-settings-chevron">›</span></button>
+    </div>
+    <div class="pp-settings-group pp-settings-quick-group">
+      <div class="pp-settings-section-title">Quick Access</div>
+      <button class="pp-settings-row" id="settings-invites" type="button"><span>📩</span><b>Invites & Messages</b><span class="pp-settings-chevron">›</span></button>
+      <button class="pp-settings-row" id="settings-cp" type="button"><span>💞</span><b>CP Center</b><span class="pp-settings-chevron">›</span></button>
+      <button class="pp-settings-row" id="settings-level" type="button"><span>⭐</span><b>Level Management</b><span class="pp-settings-chevron">›</span></button>
+    </div>
+    <div class="pp-settings-logout">
+      <button id="settings-logout" class="pp-logout-btn" type="button">Logout</button>
+      <div>PingPong • Production Premium • v2.1.0</div><div>Official Support: <a href="mailto:pingpongappsupport@gmail.com">pingpongappsupport@gmail.com</a></div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============ POLICY / SAFETY CENTER ============ -->
+<div id="modal-policy-center" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-label="Policies and Safety Center">
+  <div class="modal-card pp-policy-modal">
+    <div class="pp-policy-head">
+      <div><span class="pp-policy-kicker">PINGPONG • SAFETY & POLICY</span><h3 id="policy-center-title">Terms of Service</h3></div>
+      <button id="btn-policy-center-close" class="modal-x-close" type="button" aria-label="Close">✕</button>
+    </div>
+    <div class="pp-policy-tabs" role="tablist">
+      <button class="pp-policy-tab active" data-policy-tab="terms" type="button">Terms</button>
+      <button class="pp-policy-tab" data-policy-tab="privacy" type="button">Privacy</button>
+      <button class="pp-policy-tab" data-policy-tab="community" type="button">Community</button>
+      <button class="pp-policy-tab" data-policy-tab="refund" type="button">Refunds</button>
+      <button class="pp-policy-tab" data-policy-tab="safety" type="button">Safety</button>
+      <button class="pp-policy-tab" data-policy-tab="data" type="button">Data</button>
+      <button class="pp-policy-tab" data-policy-tab="ip" type="button">IP</button>
+    </div>
+    <div id="policy-center-content" class="pp-policy-content"></div>
+  </div>
+</div>
+
+<!-- ============ PRIVACY / SETTINGS CENTER ============ -->
+<div id="modal-privacy-center" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-label="Privacy and settings information">
+  <div class="modal-card pp-policy-modal">
+    <div class="pp-policy-head">
+      <div><span class="pp-policy-kicker">PINGPONG • SETTINGS</span><h3>Privacy & Safety Center</h3></div>
+      <button id="btn-privacy-center-close" class="modal-x-close" type="button" aria-label="Close">✕</button>
+    </div>
+    <div class="pp-settings-info-grid">
+      <article><b>🛡️ Account & Security</b><p>Authentication uses your signed session. OTP/password credentials are not shown to other users. Use Logout on shared devices and Delete Account only when you are certain.</p></article>
+      <article><b>🚫 Blocked Users</b><p>Blocking prevents private text/photo messaging. The blocked relationship is enforced by the server, not only by the screen. You can unblock the user from their profile or private chat.</p><button id="btn-settings-open-blocked" class="btn btn-ghost btn-block" type="button">Manage blocked users</button></article>
+      <article><b>💬 Private Messaging</b><p>Private messages are limited to the conversation participants. Clear Messages removes the saved conversation timeline for that chat. Do not send passwords, OTPs or payment credentials.</p></article>
+      <article><b>📞 Private Audio Calls</b><p>Private audio calling is available only when both users follow each other. Calls work from the private chat even after both users leave a room.</p></article>
+      <article><b>🔔 Notifications</b><p>Push notification preference is controlled from Settings. Device-level notification permission is controlled by Android/browser settings.</p></article>
+      <article><b>🧹 Cache & Local Data</b><p>Clean Cache removes supported local browser cache entries while preserving the active login/session keys used by this app.</p></article>
+      <article><b>💎 Payments & Virtual Items</b><p>Diamonds, gifts and other virtual items are governed by the applicable purchase/store rules. Keep receipts for payment disputes and report duplicate or unauthorized charges to support promptly.</p></article>
+      <article><b>📝 Feedback</b><p>Feedback submitted from the app is shown to authorized Control Panel staff and is automatically removed after 7 days. Never include secrets or payment credentials.</p></article>
+    </div>
+  </div>
+</div>
+
+<!-- ============ WALLET ============ -->
+<section id="view-wallet" class="view wallet-v2">
+  <iframe id="wallet-ui-frame" title="PingPong Wallet" src="about:blank" style="display:block;width:100%;height:100%;min-height:calc(100vh - 72px);border:0;background:#F2F2F3;"></iframe>
+</section>
+
+<!-- ============ RECHARGE MODAL ============ -->
+<div id="recharge-modal" class="modal-overlay hidden">
+  <div class="modal-box recharge-modal-box">
+    <div class="modal-head">
+      <h3 id="recharge-step-title">Recharge</h3>
+      <button id="btn-recharge-close" class="icon-btn">✕</button>
+    </div>
+
+    <!-- Step 1: pick a package -->
+    <div id="recharge-step-package" class="recharge-step">
+      <div id="recharge-package-grid" class="recharge-package-grid"></div>
+      <p id="recharge-package-empty" class="hint hidden">No recharge packages are available right now.</p>
+    </div>
+
+    <!-- Step 2: pick a payment method -->
+    <div id="recharge-step-method" class="recharge-step hidden">
+      <p class="hint">Selected package: <span id="recharge-selected-summary"></span></p>
+      <p class="field-label">Select Payment Method</p>
+      <div id="recharge-method-list" class="recharge-method-list"></div>
+      <button id="btn-recharge-back-to-package" class="btn btn-ghost btn-block">← Back</button>
+    </div>
+
+    <!-- Step 3: pay + submit UTR -->
+    <div id="recharge-step-pay" class="recharge-step hidden">
+      <div class="auth-card">
+        <p class="hint">Pay <b id="recharge-pay-amount"></b> to:</p>
+        <p class="field-label" id="recharge-pay-upi"></p>
+        <p class="hint" id="recharge-pay-name"></p>
+        <p class="hint">Ref: <span id="recharge-pay-ref"></span></p>
+        <p class="hint" id="recharge-pay-instructions"></p>
+        <p class="hint" id="recharge-pay-status" style="text-align:center;">Payment opens in your installed UPI app. Returning to PingPong does not confirm payment.</p>
+      </div>
+      <button id="btn-recharge-open-app" class="btn btn-accent btn-block">Open Payment App</button>
+      <p class="hint" id="recharge-pay-fallback-note" style="text-align:center;">If the app didn't open automatically, tap the button above, or pay manually to the UPI ID shown.</p>
+      <label class="field-label">Transaction ID / UTR (from your payment app)</label>
+      <input id="recharge-utr-input" type="text" class="field-solo" placeholder="e.g. 123456789012" maxlength="64">
+      <button id="btn-recharge-submit" class="btn btn-primary btn-block">Submit for Verification</button>
+      <button id="btn-recharge-back-to-method" class="btn btn-ghost btn-block">← Back</button>
+      <p class="hint">Diamonds are credited only after an Admin verifies this payment. This is not instant.</p>
+    </div>
+
+    <!-- Step 4: pending confirmation -->
+    <div id="recharge-step-pending" class="recharge-step hidden">
+      <div class="auth-card" style="text-align:center;">
+        <p style="font-size:32px;">⏳</p>
+        <p class="field-label">Payment Submitted — Pending Verification</p>
+        <p class="hint">An Admin will verify your UTR and credit your Diamonds soon. You can check the status anytime in Recharge History.</p>
+        <button id="btn-recharge-done" class="btn btn-primary btn-block">Done</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ TREASURE BOX ============ -->
+<section id="view-treasure" class="view">
+  <header class="topbar">
+    <button class="icon-btn" data-back="view-profile">←</button>
+    <h2>Treasure Box</h2>
+  </header>
+  <main class="page-body">
+    <div class="treasure-card">
+      <div class="treasure-icon">🎁</div>
+      <h3>Daily Lucky Box</h3>
+      <p class="hint">Can open once a day</p>
+      <button id="btn-claim-daily" class="btn btn-primary btn-block">Open</button>
+    </div>
+    <div class="treasure-card">
+      <div class="treasure-icon">🏆</div>
+      <h3>Weekly Reward</h3>
+      <p class="hint">Once a week</p>
+      <button id="btn-claim-weekly" class="btn btn-accent btn-block">Open</button>
+    </div>
+  </main>
+</section>
+
+<!-- ============ FRAMES ============ -->
+<section id="view-frames" class="view">
+  <header class="topbar">
+    <button class="icon-btn" data-back="view-profile">←</button>
+    <h2>Frames</h2>
+  </header>
+  <main class="page-body">
+    <p class="hint">If Admin sends you a frame, it will show here as active. All catalog frames are shown below.</p>
+    <div id="active-frame-box" class="auth-card"></div>
+    <div class="section-head"><h2>Catalog</h2></div>
+    <div id="frame-catalog-list" class="gift-grid"></div>
+  </main>
+</section>
+
+<!-- ============ SHOP ============ -->
+<!-- Hub screen only — each tile opens whatever real system already backs
+     that item type. Frames -> reuses the existing view-frames/openFrames()
+     screen and /api/frames/* endpoints as-is (no new backend). Vehicles ->
+     the add-on Vehicle Entry System (see vehicles.js) — admin assigns
+     directly, no purchase step, same "select and use" UX as Frames.
+     Themes still has no per-user admin-grant system in this codebase
+     (Theme Library is a shared room-background list any owner can pick
+     from, not something Admin assigns to a specific user) — surfaced
+     honestly below rather than faked. -->
+<section id="view-shop" class="view">
+  <header class="topbar">
+    <button class="icon-btn" data-back="view-room">←</button>
+    <h2>🛍 Shop</h2>
+  </header>
+  <main class="page-body">
+    <p class="hint">Items Admin sends you show up here as your inventory.</p>
+    <div class="section-head"><h2>My Items</h2></div>
+    <div class="shop-hub-grid">
+      <button id="btn-shop-frames" class="shop-hub-tile">
+        <span class="shop-hub-icon">🖼️</span>
+        <span>Avatar Frames</span>
+      </button>
+      <button class="shop-hub-tile" disabled>
+        <span class="shop-hub-icon">🎨</span>
+        <span>Themes</span>
+        <span class="hint">Not available yet</span>
+      </button>
+      <button id="btn-shop-vehicles" class="shop-hub-tile">
+        <span class="shop-hub-icon">🚗</span>
+        <span>Vehicles</span>
+      </button>
+    </div>
+  </main>
+</section>
+
+<style id="rocket-game-fullscreen-polish">
+#rocket-crash-modal.rocket-game-fullscreen{position:fixed!important;inset:0!important;width:100vw!important;height:100vh!important;height:100dvh!important;max-width:none!important;max-height:none!important;margin:0!important;padding:0!important;overflow:hidden!important;z-index:2147483000!important;background:rgba(2,5,18,.97)!important;backdrop-filter:blur(18px) saturate(1.25);-webkit-backdrop-filter:blur(18px) saturate(1.25)}
+#rocket-crash-modal.rocket-game-fullscreen:fullscreen{width:100vw;height:100vh;height:100dvh;background:#050817!important}
+#rocket-crash-modal .rocket-game-fullscreen-frame{position:relative;width:100vw;height:100vh;height:100dvh;max-width:none;max-height:none;margin:0;background:linear-gradient(145deg,rgba(7,16,43,.98),rgba(24,8,64,.96));border:0;border-radius:0;overflow:hidden;box-shadow:inset 0 0 45px rgba(72,180,255,.12)}
+#rocket-crash-frame{display:block;width:100%;height:100%;border:0;background:transparent}
+#btn-close-rocket-crash{top:max(8px,env(safe-area-inset-top,0px))!important;right:max(8px,env(safe-area-inset-right,0px))!important;min-width:38px;min-height:38px;border-radius:12px!important;background:rgba(13,22,48,.72)!important;border-color:rgba(157,208,255,.48)!important;box-shadow:0 5px 24px rgba(0,0,0,.32),0 0 18px rgba(67,177,255,.16);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+</style>
+<!-- Room Games popup: Lucky Fruit, Teen Patti and Rocket Crash. Each launches from the room without leaving the seat. -->
+<div id="room-game-hub" class="modal-overlay hidden game-hub-modal" role="dialog" aria-modal="true" aria-label="Room Games">
+  <div class="game-hub-card">
+    <div class="game-hub-head"><h3>🎮 ROOM GAMES</h3><button id="btn-close-game-hub" class="icon-btn" type="button" aria-label="Close games">✕</button></div>
+    <div class="game-hub-grid">
+      <button class="game-hub-tile" id="btn-hub-lucky-fruit" type="button"><img src="/images/game-hub/lucky-fruit.png" alt="Lucky Fruit"><span>🍀 Lucky Fruit</span></button>
+      <button class="game-hub-tile" id="btn-hub-lucky-pro" type="button"><img src="/images/game-hub/lucky-pro.png" alt="Lucky Pro"><span>🍎 Lucky Pro</span></button>
+      <button class="game-hub-tile" id="btn-hub-teen-patti" type="button"><img src="/images/game-hub/teen-patti.png" alt="Teen Patti"><span>🃏 Teen Patti</span></button>
+      <button class="game-hub-tile" id="btn-hub-classic-slot" type="button"><img src="/images/game-hub/classic-slot.png" alt="Classic Slot"><span>🎰 Lucky Slot</span></button>
+    </div>
+    <div class="game-hub-note">Choose a game · opens in-room · up to 70% of screen</div>
+  </div>
+</div>
+
+<!-- Teen Patti game bottom-sheet: keeps the supplied HTML isolated from the main app CSS/JS. -->
+<div id="teen-patti-sheet" class="modal-overlay hidden teen-patti-sheet" role="dialog" aria-modal="true" aria-label="Teen Patti">
+  <div class="teen-patti-sheet-card">
+    <div class="teen-patti-sheet-head"><strong>🃏 Teen Patti</strong><button id="btn-close-teen-patti" class="icon-btn" type="button" aria-label="Close Teen Patti">✕</button></div>
+    <iframe id="teen-patti-frame" title="Teen Patti game" src="about:blank" loading="lazy" allow="fullscreen" referrerpolicy="same-origin"></iframe>
+  </div>
+</div>
+
+<!-- Classic Slot: in-room 70% sheet, same-origin isolated iframe. -->
+<div id="classic-slot-sheet" class="modal-overlay hidden teen-patti-sheet" role="dialog" aria-modal="true" aria-label="Lucky Slot">
+  <div class="teen-patti-sheet-card">
+    <div class="teen-patti-sheet-head"><strong>🎰 Lucky Slot</strong><button id="btn-close-classic-slot" class="icon-btn" type="button" aria-label="Close Lucky Slot">✕</button></div>
+    <iframe id="classic-slot-frame" title="Lucky Slot game" src="about:blank" loading="lazy" allow="fullscreen" referrerpolicy="same-origin"></iframe>
+  </div>
+</div>
+
+<!-- Lucky Pro is a separate game; legacy game routes and UI remain unchanged. -->
+<div id="lucky-pro-sheet" class="modal-overlay hidden teen-patti-sheet" role="dialog" aria-modal="true" aria-label="Lucky Pro">
+  <div class="teen-patti-sheet-card">
+    <div class="teen-patti-sheet-head"><strong>🍎 Lucky Pro</strong><button id="btn-close-lucky-pro" class="icon-btn" type="button" aria-label="Close Lucky Pro">✕</button></div>
+    <iframe id="lucky-pro-frame" title="Lucky Pro game" src="about:blank" loading="lazy" allow="fullscreen" referrerpolicy="same-origin"></iframe>
+  </div>
+</div>
+
+<!-- ============ MY VEHICLES (Vehicle Entry System add-on) ============ -->
+<section id="view-vehicles" class="view">
+  <header class="topbar">
+    <button class="icon-btn" data-back="view-shop">←</button>
+    <h2>My Vehicles</h2>
+  </header>
+  <main class="page-body">
+    <p class="hint">If Admin sends you a Vehicle, it shows here. Pick one as Active to play its entry animation when you join a room.</p>
+    <div id="vehicle-list" class="gift-grid"></div>
+    <p id="vehicle-list-empty" class="hint hidden">No Vehicles assigned yet.</p>
+  </main>
+</section>
+
+
+<!-- ============ DIAMOND CENTER ============ -->
+<section id="view-diamond-center" class="view">
+  <header class="topbar">
+    <button class="icon-btn" data-back="view-profile">←</button>
+    <h2>Diamond Center</h2>
+  </header>
+  <main class="page-body">
+    <div id="dc-user-body"></div>
+  </main>
+</section>
+
+<!-- ============ HOST CENTER ============ -->
+<section id="view-host-center" class="view">
+  <header class="topbar">
+    <button class="icon-btn" data-back="view-profile">←</button>
+    <h2>Host Center</h2>
+  </header>
+  <main class="page-body">
+    <div class="stat-grid">
+      <div class="stat-box"><span class="stat-label">Daily Gifts</span><span class="stat-value" id="hc-daily-gifts">0</span></div>
+      <div class="stat-box"><span class="stat-label">Weekly Gifts</span><span class="stat-value" id="hc-weekly-gifts">0</span></div>
+      <div class="stat-box"><span class="stat-label">Monthly Gifts</span><span class="stat-value" id="hc-monthly-gifts">0</span></div>
+      <div class="stat-box"><span class="stat-label">Total Gifts</span><span class="stat-value" id="hc-total-gifts">0</span></div>
+      <div class="stat-box"><span class="stat-label">Total Diamonds</span><span class="stat-value"><img src="/images/icons/icon-diamond-premium.png" class="currency-icon" alt="diamond"> <span id="hc-total-diamonds">0</span></span></div>
+      <div class="stat-box"><span class="stat-label">Estimated Diamond Value</span><span class="stat-value"><img src="/images/icons/icon-diamond-premium.png" class="currency-icon" alt="diamond"> <span id="hc-diamond-value">0</span></span></div>
+    </div>
+    <div class="section-head"><h2>Gift Details</h2></div>
+    <div class="social-tabs" id="hc-period-tabs">
+      <button class="social-tab active" data-period="all" type="button">All</button>
+      <button class="social-tab" data-period="daily" type="button">Today</button>
+      <button class="social-tab" data-period="weekly" type="button">This Week</button>
+      <button class="social-tab" data-period="monthly" type="button">This Month</button>
+    </div>
+    <div id="hc-gift-list" class="user-list"></div>
+    <div id="hc-gift-empty" class="empty-state hidden"><p>No gifts yet.</p></div>
+  </main>
+</section>
+<!-- ============ FOLLOW LIST ============ -->
+<section id="view-follow-list" class="view">
+  <header class="topbar">
+    <button id="btn-back-follow-list" class="icon-btn">←</button>
+    <h2 id="follow-list-title">Followers</h2>
+  </header>
+  <main class="page-body pp-follow-page">
+    <div class="pp-follow-intro"><div class="pp-follow-intro-icon">✦</div><div><strong id="follow-list-count">Your community</strong><span>Tap a profile to view photos, details and CP status.</span></div></div>
+    <label class="pp-follow-search"><span aria-hidden="true">⌕</span><input id="follow-list-search" type="search" placeholder="Search name or user ID" autocomplete="off"><button id="follow-list-search-clear" type="button" aria-label="Clear search" class="hidden">×</button></label>
+    <div id="follow-list-items" class="user-list pp-follow-list"></div>
+    <div id="follow-list-empty" class="empty-state hidden"><p>No one yet.</p></div>
+    <div id="follow-list-no-results" class="empty-state hidden"><p>No matching profiles.</p></div>
+  </main>
+</section>
+
+<!-- ============ GLOBAL SEARCH ============ -->
+<section id="view-search" class="view pp-search-view">
+  <div class="pp-search-shell">
+    <header class="pp-search-header">
+      <button id="btn-search-back" class="pp-search-back" type="button" aria-label="Back">‹</button>
+      <div class="pp-search-input-wrap">
+        <span class="pp-search-input-icon">⌕</span>
+        <input id="global-search-input" type="search" inputmode="search" autocomplete="off" placeholder="Search User ID, Room ID or name">
+        <button id="global-search-submit" type="button" aria-label="Search">⌕</button>
+        <button id="global-search-clear" class="hidden" type="button" aria-label="Clear">×</button>
+      </div>
+    </header>
+    <div class="pp-search-tabs" role="tablist" aria-label="Search type">
+      <button class="pp-search-tab active" data-search-type="room" type="button">Room</button>
+      <button class="pp-search-tab" data-search-type="user" type="button">User</button>
+    </div>
+    <main class="pp-search-results-wrap">
+      <div id="global-search-loading" class="pp-search-status hidden">Searching…</div>
+      <div id="global-search-empty" class="pp-search-status hidden">No result found</div>
+      <div id="global-search-room-results" class="pp-search-results"></div>
+      <div id="global-search-user-results" class="pp-search-results hidden"></div>
+    </main>
+  </div>
+</section>
+
+<!-- ============ OTHER USER PROFILE ============ -->
+<section id="view-other-profile" class="view">
+  <header class="topbar">
+    <button id="btn-back-other-profile" class="icon-btn">←</button>
+    <h2>Profile</h2>
+  </header>
+  <main class="page-body">
+    <div class="profile-hero">
+      <div class="avatar-frame-wrap avatar-frame-lg" id="other-avatar-frame">
+        <img id="other-avatar" class="avatar avatar-lg" src="" alt="">
+        <div id="other-cp-profile-composite" class="cp-profile-composite hidden" aria-hidden="true">
+          <img id="other-cp-primary-avatar" class="cp-profile-primary-avatar" src="" alt="Profile photo">
+          <img class="cp-profile-heart" src="/images/relationships/cp-profile-heart.png" alt="CP">
+          <img id="other-cp-partner-avatar" class="cp-profile-partner-avatar" src="" alt="CP partner">
+        </div>
+        <img id="other-blue-badge" class="profile-blue-badge hidden" src="/images/badges/blue_diamond_v.png" alt="Blue Diamond V">
+      </div>
+      <span id="other-vip-badge" class="vip-badge vip-0">VIP 0</span>
+      <span id="other-country-badge" class="pp-country" title="Country">🌐</span>
+      <img id="other-svip-tag" class="svip-tag-img hidden" alt="SVIP">
+      <span class="tag-row-break">
+        <img id="other-agency-tag" class="svip-tag-img hidden" alt="Agency Tag">
+        <img id="other-seller-tag" class="svip-tag-img hidden" alt="Seller">
+        <img id="other-official-tag" class="svip-tag-img hidden" alt="Official">
+        <img id="other-merchant-tag" class="svip-tag-img hidden merchant-profile-tag" alt="Merchant">
+      </span>
+      <span id="other-seller-badge" class="seller-badge hidden">Seller</span>
+      <span id="other-tag-badge" class="tag-badge hidden"></span>
+      <span id="other-agency-badge" class="agency-badge-image hidden" aria-label="Active Agency"></span>
+      <h3 id="other-name"></h3>
+      <div class="id-tag">ID: <span id="other-userid"></span></div>
+      <div id="other-presence" class="profile-presence">Offline</div>
+      <div class="modal-actions">
+        <button id="btn-follow-toggle" class="btn btn-primary">Follow</button>
+        <button id="btn-message-user" class="btn btn-accent">Message</button>
+        <!-- Call Hosting: hidden by default, shown only for approved hosts — see chApplyCallButtonVisibility() -->
+        <button id="btn-call-host-audio" class="btn btn-accent hidden"><img class="icon-img" src="images/icons/icon-call-premium.svg" alt="">Call</button>
+        <button id="btn-call-host-video" class="btn btn-accent hidden"><img class="icon-img" src="images/icons/icon-video-call.jpg" alt="">Video Call</button>
+        <button id="btn-user-block" class="btn btn-secondary">Block</button>
+        <button id="btn-user-report" class="btn btn-secondary">Report</button>
+      </div>
+      <div id="other-relationship-actions" class="relationship-actions profile-relationship-actions">
+        <button id="btn-other-friendship" class="relationship-btn relationship-btn-friendship" type="button">🤝 Friendship</button>
+        <button id="btn-other-unfriend" class="relationship-btn relationship-btn-unfriend hidden" type="button">💔 Unfriend</button>
+        <button id="btn-other-cp" class="relationship-btn relationship-btn-cp" type="button">💞 CP</button>
+        <button id="btn-other-uncp" class="relationship-btn relationship-btn-unfriend hidden" type="button">💔 UnCP</button>
+      </div>
+      <div id="other-relationship-status" class="relationship-profile-status hidden"></div>
+    </div>
+    <div class="stat-row">
+      <div class="stat-box"><span id="other-followers" class="stat-num">0</span><span class="stat-label">Followers</span></div>
+      <div class="stat-box"><span id="other-following" class="stat-num">0</span><span class="stat-label">Following</span></div>
+      <div class="stat-box"><span id="other-level" class="stat-num">1</span><span class="stat-label">Level</span></div>
+    </div>
+  </main>
+</section>
+
+<!-- ============ INBOX ============ -->
+<section id="view-inbox" class="view">
+  <header class="topbar"><h2>Inbox</h2></header>
+  <main class="page-body">
+    <div id="inbox-list" class="user-list"></div>
+    <div id="inbox-empty" class="empty-state hidden"><p>No messages.</p></div>
+  </main>
+  <nav class="bottom-nav">
+    <button class="nav-btn" data-nav="home"><img class="nav-icon-custom" src="/images/icons/custom-nav/nav-home.png" alt="Home" draggable="false"><span data-i18n="nav_home">Home</span></button>
+    <button class="nav-btn active inbox-nav-btn" data-nav="inbox"><span class="inbox-unread-badge hidden">0</span><img class="nav-icon-custom" src="/images/icons/custom-nav/nav-inbox.png" alt="Inbox" draggable="false"><span data-i18n="nav_inbox">Message</span></button>
+    <button class="nav-btn" data-nav="profile"><img class="nav-icon-custom" src="/images/icons/custom-nav/nav-profile.png" alt="Profile" draggable="false"><span data-i18n="nav_profile">Me</span></button>
+  </nav>
+</section>
+
+<!-- ============ MESSAGE THREAD ============ -->
+<section id="view-thread" class="view">
+  <header class="topbar">
+    <button id="btn-back-thread" class="icon-btn">←</button>
+    <div class="thread-title-wrap">
+      <h2 id="thread-title">Chat</h2>
+      <span id="thread-presence" class="thread-presence">Offline</span>
+    </div>
+    <div class="thread-call-btns">
+      <button id="btn-thread-audio-call" class="icon-btn" title="Audio call"><img class="icon-img" style="margin-right:0;" src="images/icons/icon-call-premium.svg" alt=""></button>
+      <button id="btn-thread-block" class="icon-btn" title="Block user" aria-label="Block user">🚫</button>
+      <button id="btn-thread-clear" class="icon-btn" title="Clear messages" aria-label="Clear messages">🧹</button>
+    </div>
+  </header>
+  <div id="thread-log" class="chat-log thread-log"></div>
+  <div class="room-toolbar">
+    <input id="thread-photo-input" type="file" accept="image/*" class="hidden">
+    <button id="btn-thread-photo" class="icon-btn thread-photo-btn" title="Send photo">
+      <img src="/images/icons/icon-chat-image.png" alt="Send photo">
+    </button>
+    <input id="thread-input" type="text" placeholder="Type a message..." class="chat-input">
+    <button id="btn-thread-send" class="tool-btn tool-btn-accent">➤</button>
+  </div>
+</section>
+
+
+
+<!-- ============ IMAGE PREVIEW LIGHTBOX ============
+     Tapping a photo bubble in a private-message thread opens it full-screen
+     here. Nothing else uses this yet — kept generic (openImagePreview(url))
+     so any future image message type can reuse it. -->
+<div id="modal-image-preview" class="modal-overlay hidden image-preview-overlay">
+  <button id="btn-image-preview-close" class="modal-x-close" title="Close" aria-label="Close">✕</button>
+  <img id="image-preview-img" src="" alt="">
+</div>
+
+<!-- ============ PRIVATE AUDIO/VIDEO CALL OVERLAY ============
+     One overlay covers both the incoming-ring screen and the in-call
+     screen (audio + video); app.js toggles a couple of classes/hidden
+     states on it depending on the call's current stage. Lives outside
+     the normal .view stack (position:fixed, own z-index) so it can pop
+     up over any screen — Inbox, thread, home — the moment a call comes
+     in. -->
+<div id="call-overlay" class="call-overlay hidden">
+  <!-- Private calls are audio-only. The media element remains as an internal
+       audio sink for WebRTC compatibility; it is never exposed as video UI. -->
+  <div id="call-video-remote-wrap" class="call-video-remote-wrap hidden" aria-hidden="true">
+    <video id="call-video-remote" playsinline autoplay></video>
+  </div>
+  <div class="call-info">
+    <img id="call-peer-photo" class="call-peer-photo" alt="">
+    <div id="call-peer-name" class="call-peer-name">User</div>
+    <div id="call-status-text" class="call-status-text">Calling...</div>
+  </div>
+
+  <!-- Incoming call (callee, before accept/reject) -->
+  <div id="call-incoming-actions" class="call-incoming-actions hidden">
+    <button id="btn-call-reject" class="call-round-btn call-round-btn-reject" title="Decline">✕</button>
+    <button id="btn-call-accept" class="call-round-btn call-round-btn-accept" title="Accept"><img id="call-accept-icon" class="icon-img-round" src="images/icons/icon-call-premium.svg" alt=""></button>
+  </div>
+
+  <!-- Active call controls (both sides, once connecting/connected) -->
+  <div id="call-active-controls" class="call-active-controls hidden">
+    <button id="btn-call-mute" class="call-ctrl-btn" title="Mute">🎤</button>
+    <button id="btn-call-speaker" class="call-ctrl-btn" title="Speaker">🔊</button>
+    <button id="btn-call-hangup" class="call-round-btn call-round-btn-reject" title="End call">☎</button>
+  </div>
+
+  <!-- Outgoing call (caller, waiting to be answered) — just a cancel button -->
+  <div id="call-outgoing-actions" class="call-outgoing-actions hidden">
+    <button id="btn-call-cancel" class="call-round-btn call-round-btn-reject" title="Cancel">✕</button>
+  </div>
+</div>
+
+<!-- CALL HOSTING — paid Voice/Video calls to approved hosts. Deliberately a
+     separate overlay/DOM/button-set from #call-overlay above (the free
+     private-inbox call feature) so nothing here ever shares a click
+     listener with it — the only thing reused is getIceServers() (a
+     read-only helper) and the same WebRTC APIs, per the "reuse existing
+     architecture, don't rebuild the call engine" requirement, without
+     touching a single line of the existing call:* code above. -->
+<div id="hostcall-overlay" class="call-overlay hidden">
+  <div id="hostcall-video-remote-wrap" class="call-video-remote-wrap hidden">
+    <video id="hostcall-video-remote" playsinline autoplay></video>
+  </div>
+  <div id="hostcall-video-local-wrap" class="call-video-local-wrap hidden">
+    <video id="hostcall-video-local" playsinline autoplay muted></video>
+  </div>
+  <div class="call-info">
+    <img id="hostcall-peer-photo" class="call-peer-photo" alt="">
+    <div id="hostcall-peer-name" class="call-peer-name">Host</div>
+    <div id="hostcall-status-text" class="call-status-text">Calling...</div>
+    <div id="hostcall-billing-text" class="call-status-text" style="font-size:13px;opacity:.85;"></div>
+  </div>
+  <div id="hostcall-incoming-actions" class="call-incoming-actions hidden">
+    <button id="btn-hostcall-reject" class="call-round-btn call-round-btn-reject" title="Decline">✕</button>
+    <button id="btn-hostcall-accept" class="call-round-btn call-round-btn-accept" title="Accept"><img id="hostcall-accept-icon" class="icon-img-round" src="images/icons/icon-call-premium.svg" alt=""></button>
+  </div>
+  <div id="hostcall-active-controls" class="call-active-controls hidden">
+    <button id="btn-hostcall-mute" class="call-ctrl-btn" title="Mute">🎤</button>
+    <button id="btn-hostcall-hangup" class="call-round-btn call-round-btn-reject" title="End call">☎</button>
+  </div>
+  <div id="hostcall-outgoing-actions" class="call-outgoing-actions hidden">
+    <button id="btn-hostcall-cancel" class="call-round-btn call-round-btn-reject" title="Cancel">✕</button>
+  </div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<!-- Firebase Auth Migration — Phase C. Compat SDK (no bundler in this
+     project, so the compat build keeps this a plain <script> include like
+     everything else here). Loaded before app.js/firebaseClient.js so
+     `firebase` is defined when they run. -->
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+<script src="firebaseClient.js?v=20261019-google-only"></script>
+<!-- YouTube Room Player — official IFrame Player API, loaded once app-wide.
+     Only used when a room actually turns Video Mode on; does nothing otherwise. -->
+<script src="https://www.youtube.com/iframe_api"></script>
+<script src="i18n.js?v=20260726"></script>
+<!-- Phase 3 / Step 3.3: client-side SFU (LiveKit) integration. Additive —
+     defines window.PingPongVoiceSFU and otherwise does nothing at load
+     time (no network request, no SDK download) unless app.js actually
+     calls connect(), which only happens when GET /api/voice-sfu/mode
+     reports the server is running VOICE_MODE=sfu. Loaded before app.js so
+     window.PingPongVoiceSFU exists by the time app.js's SFU branch could
+     ever call it. -->
+<script src="voice-sfu.js?v=20260807a"></script>
+<script src="voice-agora.js?v=20260829a"></script>
+<!-- Local VAP alpha renderer for the curated premium entry/level-up effects. -->
+<script src="pingpong-vap-player.js?v=20260918-premium-v2"></script>
+<script src="app.js?v=20261019-google-only-rewards"></script>
+<script src="vapi-support.js?v=20260814-robin-final"></script>
+<script src="bannerSlider.js?v=20260727"></script>
+<!-- Emoji Reaction feature: dotLottie web component renders the .lottie
+     files as-is (no re-export/conversion) and gives each avatar overlay
+     its own independent canvas, so simultaneous reactions from many users
+     never share animation state. Loaded as a module (required for the
+     component), emojiReaction.js itself is a plain classic script so it
+     can read app.js's existing `socket`/`me`/`currentRoomId` state. -->
+<script type="module" src="https://unpkg.com/@lottiefiles/dotlottie-wc@latest/dist/dotlottie-wc.js"></script>
+<script src="emojiReaction.js?v=20260728"></script>
+
+
+<!-- ============ PINGPONG ABOUT / FEEDBACK ============ -->
+<div id="modal-pingpong-info" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-label="PingPong information" data-close-to-home="true">
+  <div class="modal-card pingpong-info-modal">
+    <button id="btn-pingpong-info-close" class="modal-x-close" type="button" aria-label="Close">✕</button>
+    <div class="pingpong-info-hero">
+      <img src="/images/pingpong-app-icon.png?v=20261019-playstore-kit-icon" alt="PingPong">
+      <div>
+        <div class="pingpong-info-kicker">MEET · TALK · PLAY</div>
+        <h3>PingPong</h3>
+        <p>Voice rooms, chat, calls, games and social features in one smooth experience.</p>
+      </div>
+    </div>
+    <div class="pingpong-info-tabs" role="tablist">
+      <button id="pingpong-tab-about" class="pingpong-info-tab active" type="button">About</button>
+      <button id="pingpong-tab-feedback" class="pingpong-info-tab" type="button">Feedback</button>
+    </div>
+    <div id="pingpong-about-panel" class="pingpong-info-panel">
+      <div class="pingpong-feature-grid">
+        <div><b>🎙️ Voice Rooms</b><span>Fast room entry, seats and voice controls.</span></div>
+        <div><b>💬 Messaging</b><span>Private messages, inbox and media sharing.</span></div>
+        <div><b>🎮 Play</b><span>Room games, Lucky Fruit and premium effects.</span></div>
+        <div><b>✨ Premium UI</b><span>Smooth transitions, animated branding and responsive layouts.</span></div>
+      </div>
+      <div class="pingpong-info-note"><b>Build</b><span>Production Premium v2.1.0</span></div>
+      <div class="pingpong-info-note"><b>Support</b><span>Official customer support, agency requests, official services and unresolved issues: <a href="mailto:pingpongappsupport@gmail.com">pingpongappsupport@gmail.com</a></span></div>
+    </div>
+    <div id="pingpong-feedback-panel" class="pingpong-info-panel hidden">
+      <label class="field-label" for="pingpong-feedback-type">Feedback type</label>
+      <select id="pingpong-feedback-type" class="field-solo">
+        <option value="Bug report">Bug report</option>
+        <option value="Feature request">Feature request</option>
+        <option value="UI / design">UI / design</option>
+        <option value="Performance">Performance</option>
+        <option value="Account & security">Account & security</option>
+        <option value="Payments & refund">Payments & refund</option>
+        <option value="Abuse / safety">Abuse / safety</option>
+        <option value="Other">Other</option>
+      </select>
+      <label class="field-label" for="pingpong-feedback-message">Your message</label>
+      <textarea id="pingpong-feedback-message" class="field-solo pingpong-feedback-textarea" maxlength="2000" placeholder="Tell us what happened or what you would like to improve…"></textarea>
+      <button id="btn-pingpong-feedback-submit" class="btn btn-primary btn-block" type="button">Send Feedback</button>
+      <div class="pingpong-info-note"><b>Support email</b><span><a href="mailto:pingpongappsupport@gmail.com">pingpongappsupport@gmail.com</a></span></div>
+      <p class="hint">Please do not include passwords, OTP codes or payment credentials.</p>
+    </div>
+  </div>
+</div>
+
+<div id="modal-profile-visitors" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-label="Profile visitors">
+  <div class="modal-card pp-visitors-modal">
+    <div class="pp-visitors-head">
+      <button id="btn-close-profile-visitors" class="pp-visitors-back" type="button" aria-label="Back">←</button>
+      <h2>Visitors</h2>
+      <span class="pp-visitors-head-spacer" aria-hidden="true"></span>
+    </div>
+    <div id="profile-visitors-count" class="pp-visitors-count">0 Visitors</div>
+    <div id="profile-visitors-avatars" class="pp-visitors-avatars" aria-label="Recent visitors"></div>
+    <div id="profile-visitors-lock" class="pp-visitors-lock hidden">
+      <div class="pp-visitors-lock-icon">🔒</div>
+      <div class="pp-visitors-lock-title">Visitor details are an SVIP privilege</div>
+      <div class="pp-visitors-lock-text">You can see the visitor count. Activate SVIP 1 or higher to see the visitor list, open their profiles and view their latest room status.</div>
+    </div>
+    <div id="profile-visitors-list" class="pp-visitors-list"></div>
+  </div>
+</div>
+<div id="rocket-crash-modal" class="modal-overlay hidden rocket-game-fullscreen" role="dialog" aria-modal="true" aria-label="Rocket Crash Game">
+  <div class="rocket-game-fullscreen-frame">
+    <button id="btn-close-rocket-crash" type="button" aria-label="Close Rocket Crash" style="position:absolute;right:8px;top:8px;z-index:2;border:1px solid #52648a;background:#151e38;color:#fff;border-radius:8px;padding:6px 10px">✕</button>
+    <iframe id="rocket-crash-frame" title="Rocket Crash" src="about:blank" style="width:100%;height:100%;border:0;background:#090e20"></iframe>
+  </div>
+</div>
+<script>
+(()=>{const modal=document.getElementById('rocket-crash-modal'),frame=document.getElementById('rocket-crash-frame'),open=document.getElementById('btn-open-rocket-crash'),close=document.getElementById('btn-close-rocket-crash');if(!modal||!open||!close||!frame)return;function show(){modal.classList.remove('hidden');if(frame.src==='about:blank')frame.src='/games/rocket-crash.html?v=20261019-fullscreen-premium';try{const request=modal.requestFullscreen||modal.webkitRequestFullscreen;if(request){const result=request.call(modal);if(result&&typeof result.catch==='function')result.catch(()=>{});}}catch(_){} }function hide(){modal.classList.add('hidden');try{frame.contentWindow&&frame.contentWindow.postMessage({type:'pp-rocket-event',event:'pp:stop',payload:{}},location.origin)}catch(_){}frame.src='about:blank';try{if(document.fullscreenElement&&document.exitFullscreen)document.exitFullscreen().catch(()=>{});else if(document.webkitFullscreenElement&&document.webkitExitFullscreen)document.webkitExitFullscreen();}catch(_){} }open.addEventListener('click',()=>{const menu=document.getElementById('room-more-menu');if(menu)menu.classList.add('hidden');show();});close.addEventListener('click',hide);modal.addEventListener('click',e=>{if(e.target===modal)hide();});window.addEventListener('message',e=>{if(e.origin===location.origin&&e.data&&e.data.type==='pp-close-rocket-game')hide();});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!modal.classList.contains('hidden'))hide();});})();
+</script>
+
+<!-- Premium 7-day Daily Diamond Reward -->
+<div id="daily-reward-overlay" class="daily-reward-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="daily-reward-title">
+  <div class="daily-reward-confetti" aria-hidden="true"><span>✦</span><span>★</span><span>✦</span></div>
+  <section class="daily-reward-modal">
+    <header class="daily-reward-header">
+      <div class="daily-reward-mascots" aria-hidden="true"><span>●</span><span>●</span></div>
+      <button type="button" id="daily-reward-close" class="daily-reward-close" aria-label="Close">×</button>
+      <h2 id="daily-reward-title">Daily Reward</h2>
+      <p>Sign in for 7 days and collect diamond rewards</p>
+    </header>
+    <div class="daily-reward-body">
+      <div class="daily-reward-grid" id="daily-reward-grid"></div>
+      <div id="daily-reward-message" class="daily-reward-message" aria-live="polite"></div>
+      <button type="button" id="daily-reward-claim" class="daily-reward-claim">Claim Reward</button>
+    </div>
+  </section>
+</div>
+
+<script>
+(function(){
+  const overlay=document.getElementById('daily-reward-overlay');
+  if(!overlay)return;
+  const rewards=[6000,6000,12000,12000,12000,12000,18000];
+  const grid=document.getElementById('daily-reward-grid');
+  const claim=document.getElementById('daily-reward-claim');
+  const message=document.getElementById('daily-reward-message');
+  const close=()=>overlay.classList.add('hidden');
+  document.getElementById('daily-reward-close')?.addEventListener('click',close);
+  overlay.addEventListener('click',e=>{if(e.target===overlay)close();});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')close();});
+  let state=null;
+  function diamondIcon(){
+    const img=document.createElement('img');
+    img.className='reward-diamond';img.src='/images/icons/icon-diamond-premium.png';img.alt='Diamonds';
+    img.onerror=()=>{img.onerror=null;img.src='/images/icons/blue-diamond.png';};
+    return img;
+  }
+  function render(){
+    grid.replaceChildren();
+    rewards.forEach((amount,i)=>{
+      const day=i+1,card=document.createElement('div');
+      card.className='daily-reward-day'+(day===7?' day-seven':'')+(state&&(day<state.nextDay||(state.claimedToday&&day===state.nextDay))?' is-claimed':'')+(state&&day===state.nextDay?' is-current':'');
+      const n=document.createElement('span');n.className='day-number';n.textContent=day;card.append(n);
+      if(day===7){const tag=document.createElement('span');tag.className='big-reward-label';tag.textContent='Big Reward';card.append(tag);}
+      card.append(diamondIcon());
+      const val=document.createElement('span');val.className='reward-amount';val.textContent=amount.toLocaleString('en-IN');card.append(val);
+      if(state&&(day<state.nextDay||(state.claimedToday&&day===state.nextDay))){const s=document.createElement('span');s.className='reward-state';s.textContent='✓ Claimed';card.append(s);}
+      else {const s=document.createElement('span');s.className='reward-state';s.textContent='Day '+day;card.append(s);}
+      grid.append(card);
+    });
+    const claimed=!!(state&&state.claimedToday);
+    claim.disabled=claimed||!state||state.error===true;
+    claim.textContent=claimed?'Signed in today':'Claim '+(state?rewards[Math.max(0,Math.min(6,state.nextDay-1))].toLocaleString('en-IN'):'')+' Diamonds';
+    message.textContent=state&&state.message?state.message:'Collect diamonds every day. Rewards are credited to your wallet after server confirmation.';
+  }
+  async function load(){
+    try{
+      const r=await fetch('/api/daily-reward/state',{credentials:'include',headers:{'Accept':'application/json'}});
+      const d=await r.json();
+      if(!r.ok||!d.success)throw new Error(d.message||'Please sign in to collect rewards.');
+      state=d;render();
+    }catch(e){state={error:true,claimedToday:false,nextDay:1,message:'Sign in first to claim your daily diamond reward.'};render();}
+  }
+  claim.addEventListener('click',async()=>{
+    if(claim.disabled)return;
+    claim.disabled=true;claim.textContent='Claiming…';message.textContent='Verifying your daily reward…';
+    try{
+      const r=await fetch('/api/daily-reward/claim',{method:'POST',credentials:'include',headers:{'Content-Type':'application/json','Accept':'application/json'},body:'{}'});
+      const d=await r.json();
+      if(!r.ok||!d.success)throw new Error(d.message||'Reward could not be claimed.');
+      state=d;state.message='+'+Number(d.reward||0).toLocaleString('en-IN')+' diamonds added to your wallet!';render();
+      claim.textContent='Signed in today';claim.disabled=true;
+      document.querySelectorAll('#menu-wallet-diamonds,#menu-diamond-center,#gift-modal-diamonds,#room-profile-diamonds,#hc-diamond-value').forEach(el=>{if(el&&Number.isFinite(Number(d.diamonds)))el.textContent=Number(d.diamonds).toLocaleString('en-IN');});window.dispatchEvent(new CustomEvent('pp:wallet-updated',{detail:{diamonds:d.diamonds}}));
+    }catch(e){message.textContent=e.message||'Please try again.';claim.disabled=false;claim.textContent='Claim Reward';}
+  });
+  // Expose a callable opener for the Daily Tasks/Profile entry points.
+  window.openDailyDiamondReward=()=>{overlay.classList.remove('hidden');load();};
+  window.setTimeout(load,900);
+})();
+</script>
+</body>
+</html>

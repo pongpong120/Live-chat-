@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="none">
+<defs>
+ <radialGradient id="g" cx="50%" cy="35%" r="70%"><stop offset="0" stop-color="#8b3dff" stop-opacity=".92"/><stop offset=".65" stop-color="#2a124e" stop-opacity=".96"/><stop offset="1" stop-color="#0b0616" stop-opacity="1"/></radialGradient>
+ <linearGradient id="gold" x1="50" y1="30" x2="200" y2="220" gradientUnits="userSpaceOnUse"><stop stop-color="#fff3ad"/><stop offset=".28" stop-color="#ffd35a"/><stop offset=".65" stop-color="#e9a51c"/><stop offset="1" stop-color="#fff0a1"/></linearGradient>
+ <filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<circle cx="128" cy="128" r="106" fill="url(#g)" stroke="#d7a535" stroke-opacity=".82" stroke-width="2"/>
+<circle cx="128" cy="128" r="92" stroke="#8f45ff" stroke-opacity=".68" stroke-width="2"/>
+<path d="M83 54c6-6 15-8 23-3l20 14c7 5 9 14 5 22l-9 17c-2 4-2 9 1 13 7 10 15 18 25 25 4 3 9 3 13 1l17-9c8-4 17-2 22 5l14 20c5 8 3 17-3 23l-12 12c-9 9-23 12-35 7-25-10-47-25-65-43-18-18-33-40-43-65-5-12-2-26 7-35z" fill="url(#gold)" filter="url(#glow)" stroke="#8b5510" stroke-width="3" stroke-linejoin="round"/>
+<path d="M89 63l19 13c3 2 4 6 2 10l-9 17c-5 10-4 21 2 30" stroke="#fff7ca" stroke-opacity=".65" stroke-width="4" stroke-linecap="round"/>
+</svg>

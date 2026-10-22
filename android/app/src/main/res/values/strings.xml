@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">PingPong</string>
+    <string name="app_short_name">PingPong</string>
+    <string name="notification_channel_name">PingPong notifications</string>
+    <string name="notification_channel_description">PingPong app notifications</string>
+    <string name="voice_notification_title">PingPong voice room active</string>
+    <string name="voice_notification_text">Tap to return to your room</string>
+</resources>

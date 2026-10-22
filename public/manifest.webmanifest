@@ -1,0 +1,14 @@
+{
+  "name": "PingPong Rocket",
+  "short_name": "PingPong",
+  "description": "Meet, talk and play with PingPong Rocket",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#26B5A5",
+  "theme_color": "#26B5A5",
+  "icons": [
+    { "src": "/images/pingpong-app-icon.png", "sizes": "1024x1024", "type": "image/png", "purpose": "any" },
+    { "src": "/play-store-assets/play_store_icon_512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

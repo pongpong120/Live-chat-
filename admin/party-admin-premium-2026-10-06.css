@@ -1,0 +1,16 @@
+/* Party Admin premium cleanup. Only active Party controls remain visually exposed. */
+.party-retired-section{display:none!important;}
+.side-item[data-section="merchants"],
+.side-item[data-section="diamond-sellers"],
+.side-item[data-section="kyc-review"],
+.side-item[data-section="withdrawals"],
+.side-item[data-section="official-inquiry"],
+.side-item[data-section="agency-control"],
+.side-item[data-section="agency-officials"]{display:none!important;}
+.shell-body,.admin-shell{background:radial-gradient(circle at 20% 0%,rgba(91,78,220,.16),transparent 35%),radial-gradient(circle at 90% 20%,rgba(0,203,255,.10),transparent 35%);}
+.side-item{border-radius:12px!important;transition:transform .16s ease,background .16s ease,box-shadow .16s ease;}
+.side-item:hover{transform:translateX(2px);background:rgba(255,255,255,.055)!important;}
+.side-item.active{box-shadow:0 8px 24px rgba(0,0,0,.14),inset 0 0 0 1px rgba(255,255,255,.07);}
+#sec-agencies,#sec-control-center,#sec-merchants,#sec-diamond-sellers,#sec-agency-commission,#sec-kyc-review,#sec-withdrawals,#sec-official-inquiry{display:none!important;}
+
+.godpower-inquiry-result{margin-top:14px;display:grid;gap:14px;overflow:auto}.godpower-inquiry-head{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:14px;border:1px solid var(--line);border-radius:14px;background:var(--bg-panel-2)}.godpower-inquiry-head h3{margin:0 0 5px}.godpower-inquiry-wallet{display:grid;gap:3px;text-align:right}.godpower-inquiry-wallet b{font-size:20px;color:var(--gold,#f2c66d)}.godpower-inquiry-wallet span,.godpower-inquiry-grid span{font-size:11px;color:var(--muted,#8f96a8)}.godpower-inquiry-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:8px}.godpower-inquiry-grid>div{display:grid;gap:5px;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--bg-panel)}.godpower-inquiry-grid b{overflow-wrap:anywhere}.godpower-inquiry-result h4{margin:8px 0 0}.godpower-inquiry-result .table-wrap{max-width:100%;overflow:auto}

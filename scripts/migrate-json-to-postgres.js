@@ -1,0 +1,5 @@
+'use strict';
+require('dotenv').config();
+const fs=require('fs');const path=require('path');const db=require('../db/connection');const {run}=require('../db/migrate');
+function readJson(file){try{return JSON.parse(fs.readFileSync(file,'utf8'));}catch(e){return null;}}
+(async()=>{if(!db.enabled())throw new Error('DATABASE_URL is required');await run();const root=path.resolve(process.argv[2]||path.join(__dirname,'..','data'));const p=db.getPool();const files=fs.readdirSync(root).filter(f=>f.endsWith('.json')&&!f.endsWith('.bak')).sort();for(const file of files){const value=readJson(path.join(root,file));if(value===null)continue;const key=`legacy-json:${file}`;await p.query(`INSERT INTO app_state(state_key,state_value) VALUES($1,$2::jsonb) ON CONFLICT(state_key) DO NOTHING`,[key,JSON.stringify(value)]);console.log(`[migration] imported ${file}`);}console.log(`[migration] imported ${files.length} JSON store(s) without overwriting existing PostgreSQL state.`);await db.close();})().catch(async e=>{console.error('[migration] failed:',e.message);await db.close().catch(()=>{});process.exit(1);});

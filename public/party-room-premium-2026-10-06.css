@@ -1,0 +1,90 @@
+/* Party Room Premium 2026-10-06
+   Visual layer inspired by the supplied room references.
+   Functional IDs/classes remain untouched; this file is presentation-only. */
+:root{
+  --party-glass: rgba(8,18,34,.42);
+  --party-glass-strong: rgba(6,14,28,.70);
+  --party-line: rgba(255,255,255,.18);
+  --party-soft: rgba(255,255,255,.72);
+  --party-accent: #7de3ff;
+  --party-gold: #f8d36e;
+}
+
+#view-room{
+  position:fixed!important; inset:0!important; width:100%; height:100dvh;
+  overflow:hidden!important; background:transparent!important;
+  isolation:isolate;
+}
+#view-room::before{
+  content:""; position:absolute; inset:0; z-index:-2; pointer-events:none;
+  background:radial-gradient(circle at 18% 24%,rgba(0,196,213,.38),transparent 34%),
+             radial-gradient(circle at 88% 32%,rgba(43,84,177,.28),transparent 38%),
+             linear-gradient(180deg,rgba(1,9,25,.15),rgba(1,7,18,.38));
+}
+#view-room::after{
+  content:""; position:absolute; inset:0; z-index:-1; pointer-events:none;
+  background:linear-gradient(180deg,rgba(0,0,0,.08) 0 35%,rgba(0,0,0,.12) 65%,rgba(0,0,0,.48));
+}
+
+.room-topbar{
+  min-height:70px!important; padding:10px 12px!important; gap:9px!important;
+  background:rgba(4,12,26,.30)!important; border:1px solid rgba(255,255,255,.11)!important;
+  border-radius:0 0 22px 22px!important; backdrop-filter:blur(18px) saturate(145%);
+  -webkit-backdrop-filter:blur(18px) saturate(145%);
+  box-shadow:0 12px 30px rgba(0,0,0,.16)!important;
+}
+.room-header-keep{font-size:0!important; width:40px!important;height:40px!important; border:1px solid rgba(255,255,255,.16)!important;background:rgba(255,255,255,.08)!important;border-radius:50%!important;}
+.room-header-keep::before{content:"‹";font-size:27px;color:#fff;line-height:1;}
+.room-logo-display{width:44px!important;height:44px!important;border-radius:13px!important;border:1px solid rgba(255,255,255,.22)!important;box-shadow:0 6px 20px rgba(0,0,0,.28)!important;}
+.room-title-block h2{font-size:16px!important;font-weight:900!important;letter-spacing:.1px!important;line-height:1.15!important;}
+.room-title-block .sub{font-size:10px!important;color:rgba(255,255,255,.64)!important;margin-top:3px;}
+.room-header-action,.room-header-power,.room-topbar .stat-pill-btn{width:40px!important;height:40px!important;border-radius:50%!important;background:rgba(255,255,255,.09)!important;border:1px solid rgba(255,255,255,.14)!important;box-shadow:none!important;}
+.room-topbar .stat-pill-btn{font-size:14px!important;}
+.room-header-action img,.room-header-power img{width:20px!important;height:20px!important;object-fit:contain;}
+.room-online-counter{font-size:11px!important;gap:4px!important;padding:0 9px!important;min-width:44px!important;}
+.room-online-members-icon{width:16px!important;height:16px!important;}
+
+.party-room-quickbar{height:40px;display:flex;align-items:center;gap:10px;padding:5px 12px;margin:5px 10px 0;border:1px solid rgba(255,255,255,.10);border-radius:15px;background:rgba(0,0,0,.18);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);color:#fff;}
+.party-room-stat{display:flex;align-items:center;gap:5px;min-width:70px}.party-room-stat-icon{font-size:16px}.party-room-stat strong{font-size:12px}.party-room-stat small{font-size:9px;color:rgba(255,255,255,.55)}
+.party-room-family{flex:1;text-align:center;font-size:11px;font-weight:900;letter-spacing:1px;color:rgba(255,255,255,.85)}
+.party-room-latency{display:flex;align-items:center;gap:5px;font-size:10px}.party-live-dot{width:7px;height:7px;border-radius:50%;background:#47e8a0;box-shadow:0 0 10px rgba(71,232,160,.9);}
+
+.party-owner-seat-wrap{display:flex;justify-content:center;padding:6px 0 2px;pointer-events:none;}
+.party-owner-seat{position:relative;width:88px;display:flex;flex-direction:column;align-items:center;gap:3px;filter:drop-shadow(0 7px 15px rgba(0,0,0,.24));}
+.party-owner-avatar{width:66px;height:66px;border-radius:50%;display:grid;place-items:center;overflow:hidden;background:rgba(255,255,255,.12);border:2px solid rgba(255,255,255,.30);box-shadow:0 0 0 4px rgba(255,255,255,.08),0 0 24px rgba(125,227,255,.14);}
+.party-owner-avatar img{width:100%;height:100%;object-fit:cover}.party-owner-placeholder{font-size:29px;color:rgba(255,255,255,.78)}
+.party-owner-crown{position:absolute;top:-11px;right:10px;font-size:22px;color:var(--party-gold);text-shadow:0 0 12px rgba(248,211,110,.65);z-index:2;transform:rotate(-7deg);}
+.party-owner-seat strong{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;color:#fff;text-shadow:0 2px 7px rgba(0,0,0,.6);}
+.party-owner-seat small{font-size:9px;color:rgba(255,255,255,.58);}
+.party-owner-seat.is-live .party-owner-avatar{animation:party-owner-pulse 2.2s ease-in-out infinite;}
+@keyframes party-owner-pulse{50%{box-shadow:0 0 0 5px rgba(125,227,255,.08),0 0 30px rgba(125,227,255,.22)}}
+
+.room-ranking-strip{margin:2px 10px 5px!important;padding:6px 9px!important;min-height:35px!important;border-radius:13px!important;background:rgba(255,255,255,.065)!important;border:1px solid rgba(255,255,255,.09)!important;backdrop-filter:blur(12px);}
+.room-ranking-label{gap:5px!important}.room-ranking-label span{font-size:11px!important}.room-ranking-label small{font-size:8px!important;}
+.ranking-preview{min-height:28px!important;height:28px!important;border-radius:14px!important;background:rgba(255,255,255,.07)!important;border:1px solid rgba(255,255,255,.10)!important;}
+
+.stage-wrap{flex:0 0 auto!important;min-height:0!important;}
+.seat-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:18px 7px!important;padding:3px 10px 5px!important;}
+.seat{gap:4px!important;min-width:0;}
+.seat-circle{width:64px!important;height:64px!important;border-radius:50%!important;background:rgba(210,230,245,.16)!important;border:1px solid rgba(255,255,255,.26)!important;box-shadow:0 7px 20px rgba(0,0,0,.16),inset 0 0 0 1px rgba(255,255,255,.04)!important;}
+.seat-empty-mic-icon{width:28px!important;height:28px!important;opacity:.72;filter:drop-shadow(0 2px 7px rgba(0,0,0,.2));}
+.seat-name{font-size:10.5px!important;color:rgba(255,255,255,.92)!important;max-width:76px!important;text-shadow:0 2px 7px rgba(0,0,0,.65);}
+.seat-num{font-size:9px!important;color:rgba(255,255,255,.52)!important;}
+.seat-mic-muted{width:17px!important;height:17px!important;right:3px!important;bottom:18px!important;}
+
+.room-toolbar{position:relative!important;min-height:66px!important;padding:8px 12px calc(9px + env(safe-area-inset-bottom))!important;background:rgba(4,10,24,.66)!important;border-top:1px solid rgba(255,255,255,.10)!important;backdrop-filter:blur(20px) saturate(145%)!important;-webkit-backdrop-filter:blur(20px) saturate(145%)!important;}
+.tool-btn{width:43px!important;height:43px!important;background:rgba(255,255,255,.08)!important;border:1px solid rgba(255,255,255,.14)!important;color:#fff!important;box-shadow:0 5px 14px rgba(0,0,0,.16)!important;}
+.tool-icon-img{width:22px!important;height:22px!important;}.chat-input{height:43px!important;padding:0 14px!important;background:rgba(255,255,255,.08)!important;border:1px solid rgba(255,255,255,.12)!important;color:#fff!important;}
+.tool-btn-accent{background:linear-gradient(135deg,#8b5cf6,#ec4899)!important;border:0!important;}
+
+.gift-banner{position:relative!important;margin:2px 10px!important;min-height:0!important;border-radius:14px!important;overflow:hidden;}
+.room-gift-mention{border-radius:14px!important;background:rgba(255,255,255,.08)!important;backdrop-filter:blur(12px);}
+
+.room-private-message-window{bottom:72px!important;max-height:calc(100dvh - 150px)!important;border:1px solid rgba(255,255,255,.14)!important;background:rgba(7,14,28,.88)!important;backdrop-filter:blur(20px)!important;-webkit-backdrop-filter:blur(20px)!important;border-radius:20px!important;}
+.room-private-conversation-list,.room-private-thread-log{overflow-y:auto!important;-webkit-overflow-scrolling:touch!important;overscroll-behavior:contain;}
+
+@media(max-width:420px){
+  .seat-circle{width:60px!important;height:60px!important}.seat-grid{gap:16px 5px!important;padding-left:7px!important;padding-right:7px!important;}
+  .party-owner-avatar{width:62px;height:62px}.party-owner-seat{width:82px}.party-room-quickbar{margin-left:7px;margin-right:7px;}
+}
+@media(prefers-reduced-motion:reduce){.party-owner-seat.is-live .party-owner-avatar{animation:none}.party-owner-seat{transition:none}}

@@ -1,0 +1,71 @@
+/* PingPong premium polish pass — visual-only overrides, no application logic. */
+:root {
+  --pp-premium-glass: rgba(255, 255, 255, .075);
+  --pp-premium-line: rgba(255, 255, 255, .14);
+  --pp-premium-shadow: 0 16px 44px rgba(17, 12, 34, .18);
+  --pp-premium-ring: 0 0 0 1px rgba(255, 255, 255, .12), 0 0 24px rgba(156, 124, 255, .13);
+  --pp-premium-ease: cubic-bezier(.2, .75, .25, 1);
+}
+
+button, .btn, [role="button"] {
+  -webkit-tap-highlight-color: transparent;
+  transition: transform .18s var(--pp-premium-ease), box-shadow .22s var(--pp-premium-ease), filter .22s var(--pp-premium-ease), border-color .22s ease;
+}
+button:focus-visible, .btn:focus-visible, [role="button"]:focus-visible,
+input:focus-visible, select:focus-visible, textarea:focus-visible {
+  outline: 2px solid #8eeeff;
+  outline-offset: 3px;
+}
+button:active:not(:disabled), .btn:active:not(:disabled), [role="button"]:active {
+  transform: scale(.975);
+}
+button:disabled, .btn:disabled { cursor: not-allowed; filter: saturate(.55); }
+
+/* Gentle glass depth for existing cards and overlays; avoids changing layout. */
+.modal-card, .gift-modal-card, .pp-info-card, .pp-menu-card,
+.teen-patti-sheet-card, .room-profile-card, .wallet-card {
+  box-shadow: var(--pp-premium-shadow), var(--pp-premium-ring);
+  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
+}
+
+.party-room-quickbar {
+  position: relative;
+  border-color: rgba(156, 124, 255, .24);
+  box-shadow: 0 8px 28px rgba(38, 22, 77, .14), inset 0 1px 0 rgba(255, 255, 255, .16);
+}
+
+/* Premium edge light only on interactive surfaces that already have a border. */
+.pp-menu-item, .pp-menu-row, .pp-task-row, .stat-box, .room-profile-stat {
+  transition: background-color .2s ease, border-color .2s ease, box-shadow .2s ease, transform .2s var(--pp-premium-ease);
+}
+.pp-menu-item:active, .pp-menu-row:active, .pp-task-row:active {
+  transform: translateY(1px);
+}
+
+/* Respect accessibility preferences and avoid forcing motion on low-power users. */
+@media (prefers-reduced-motion: no-preference) {
+  .party-room-quickbar::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background: linear-gradient(110deg, transparent 0%, rgba(255,255,255,.07) 42%, transparent 62%);
+    background-size: 220% 100%;
+    animation: pp-premium-sheen 9s ease-in-out infinite;
+  }
+  @keyframes pp-premium-sheen {
+    0%, 72%, 100% { background-position: 120% 0; }
+    86% { background-position: -120% 0; }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}

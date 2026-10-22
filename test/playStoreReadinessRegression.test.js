@@ -1,0 +1,13 @@
+const fs=require("fs");const path=require("path");const assert=require("assert");
+const app=fs.readFileSync(path.join(__dirname,"../public/app.js"),"utf8");
+const css=fs.readFileSync(path.join(__dirname,"../public/style.css"),"utf8");
+assert(app.includes("explicitMissingAccount"),"refresh should only clear session on explicit missing account");
+assert(app.includes("preserving cached session"),"unexpected validation failures preserve cached session");
+assert(app.includes("data.httpStatus = res.status"),"HTTP status should be retained for bootstrap decisions");
+assert(css.includes("#view-profile-setup") && css.includes("overflow-y:auto!important"),"profile setup must scroll");
+const deletion=fs.readFileSync(path.join(__dirname,"../public/account-deletion.html"),"utf8");
+assert(deletion.includes("DELETE /api/account"));
+assert(deletion.includes("pingpongappsupport@gmail.com"));
+const dataSafety=fs.readFileSync(path.join(__dirname,"../docs/GOOGLE-PLAY-DATA-SAFETY-WORKSHEET.md"),"utf8");
+assert(dataSafety.includes("NOT a completed Play Console declaration"));
+console.log("playStoreReadinessRegression: PASS");

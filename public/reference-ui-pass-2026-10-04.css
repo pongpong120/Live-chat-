@@ -1,0 +1,186 @@
+/* PingPong Reference UI Pass — 2026-10-04
+   Based on supplied 720x1600 reference video.
+   Visual-only: preserves existing IDs, JS hooks, APIs and feature logic.
+*/
+:root{
+  --pp-ref-cream:#fbf1dc;
+  --pp-ref-cream-2:#fffaf0;
+  --pp-ref-text:#24232a;
+  --pp-ref-muted:#8d8b8d;
+  --pp-ref-line:rgba(55,47,38,.10);
+  --pp-ref-glass:rgba(255,255,255,.22);
+  --pp-ref-dark-glass:rgba(8,14,23,.42);
+}
+
+/* ===== HOME / POPULAR / MINE ===== */
+#view-home{
+  background:linear-gradient(180deg,var(--pp-ref-cream) 0%,#fff 36%,#f5f5f5 100%)!important;
+  color:var(--pp-ref-text)!important;
+}
+#view-home::before,#view-home::after{display:none!important}
+#view-home .home-fixed-head{
+  background:linear-gradient(180deg,rgba(255,243,215,.96),rgba(255,250,240,.88))!important;
+  border-bottom:1px solid rgba(64,48,30,.07)!important;
+  box-shadow:0 2px 10px rgba(50,38,24,.04)!important;
+  backdrop-filter:blur(16px)!important;
+  -webkit-backdrop-filter:blur(16px)!important;
+}
+#view-home .home-mainbar{
+  height:58px!important;padding:0 12px 5px!important;gap:7px!important;
+  align-items:flex-end!important;background:transparent!important;
+}
+#view-home .home-icon-btn,#view-home .home-search-btn{
+  flex:0 0 30px!important;width:30px!important;height:30px!important;
+  border:0!important;background:transparent!important;box-shadow:none!important;
+  padding:4px!important;color:#45413a!important;
+}
+#view-home .home-icon-btn img,#view-home .home-search-btn img{width:22px!important;height:22px!important;object-fit:contain!important;display:block}
+#view-home .home-primary-tabs{gap:25px!important}
+#view-home .home-primary-tab{
+  font-size:15px!important;font-weight:800!important;padding:0 0 7px!important;
+  color:#88837a!important;text-shadow:none!important;
+}
+#view-home .home-primary-tab.active{color:#1d1b19!important}
+#view-home .home-primary-tab.active::after{width:13px!important;height:3px!important;background:#2b2824!important}
+#view-home #banner-slider-container{padding:7px 10px 8px!important;background:transparent!important}
+#view-home #banner-slider-container .banner-slider{height:92px!important;border-radius:10px!important;box-shadow:0 5px 15px rgba(36,29,19,.07)!important}
+#view-home .home-popular-tools{padding:5px 10px!important;gap:7px!important}
+#view-home .popular-tool-card{
+  border:1px solid rgba(76,62,39,.09)!important;border-radius:10px!important;
+  background:rgba(255,255,255,.66)!important;box-shadow:0 3px 10px rgba(35,30,24,.05)!important;
+  backdrop-filter:blur(12px)!important;-webkit-backdrop-filter:blur(12px)!important;
+}
+#view-home .popular-tool-card::before,#view-home .popular-tool-card::after{display:none!important}
+#view-home .home-popular-filter{padding:0 10px!important}
+#view-home .home-popular-filter .popular-filter{font-size:11px!important;padding:6px 11px!important;color:#999!important}
+#view-home .home-popular-filter .popular-filter.active{background:#f2e7ca!important;color:#735b24!important;box-shadow:none!important}
+#view-home .home-secondary-tabs{
+  height:43px!important;padding:0 12px!important;background:rgba(255,255,255,.76)!important;
+  border-top:1px solid rgba(50,45,40,.06)!important;
+}
+#view-home .home-secondary-tabs .social-tab{font-size:11px!important;padding:12px 7px 9px!important;color:#8b8a8a!important}
+#view-home .home-secondary-tabs .social-tab.active{color:#292723!important}
+#view-home .home-secondary-tabs .social-tab.active::after{height:2px!important;width:20px!important;background:#2d2a25!important}
+#view-home .home-room-scroll{background:linear-gradient(180deg,#f7f7f7,#f3f3f3)!important;padding:0 10px!important}
+#view-home .home-room-section-head{padding:8px 2px 5px!important}
+#view-home .room-grid,#view-home .social-list{gap:7px!important}
+#view-home .room-card,#view-home .social-item{
+  padding:9px 10px!important;border-radius:11px!important;background:rgba(255,255,255,.96)!important;
+  border:1px solid rgba(45,42,37,.07)!important;box-shadow:0 3px 11px rgba(35,31,26,.055)!important;
+}
+#view-home .room-card-icon{width:42px!important;height:42px!important;border-radius:11px!important}
+#view-home .room-card-body h3,#view-home .social-item-body h3{font-size:13px!important;color:#302e2b!important}
+#view-home .room-card-body .sub,#view-home .social-item-body .sub{font-size:10px!important;color:#999!important}
+#view-home .room-card .join-btn{min-height:30px!important;padding:5px 11px!important;font-size:10px!important;border-radius:999px!important}
+
+/* ===== TRANSPARENT ICON SYSTEM ===== */
+#view-home .home-icon-btn,#view-home .home-search-btn,
+#view-home .nav-btn,
+.pp-profile-skin .pp-menu-icon-image,
+.pp-profile-skin .pp-wallet-icon,
+.pp-profile-skin .pp-premium-sbi-icon,
+.pp-profile-skin .pp-withdraw-icon,
+.room-topbar .icon-btn,
+.room-topbar .stat-pill-btn,
+.room-toolbar .tool-btn{
+  background:transparent!important;border:0!important;box-shadow:none!important;
+}
+#view-home .nav-icon-custom,.room-toolbar .tool-icon-img,
+.room-topbar img,.pp-profile-skin .pp-menu-icon-image img,
+.pp-profile-skin .pp-wallet-icon img,.pp-profile-skin .pp-premium-sbi-icon img,
+.pp-profile-skin .pp-withdraw-icon img{filter:none!important;opacity:1!important;mix-blend-mode:normal!important}
+
+/* ===== ROOM: reference dark glass composition ===== */
+#view-room{background-color:#07111b!important;background-size:cover!important;background-position:center top!important}
+#view-room .room-topbar{
+  min-height:54px!important;padding:7px 10px 3px!important;gap:6px!important;
+  background:linear-gradient(180deg,rgba(4,10,17,.38),rgba(4,10,17,.08))!important;
+  border:0!important;backdrop-filter:blur(8px)!important;-webkit-backdrop-filter:blur(8px)!important;
+}
+#view-room .room-logo-display{width:34px!important;height:34px!important;border-radius:50%!important;box-shadow:none!important;border:1px solid rgba(255,255,255,.28)!important}
+#view-room .room-title-block h2{font-size:13px!important;line-height:1.1!important;color:#fff!important;text-shadow:0 1px 6px rgba(0,0,0,.55)!important}
+#view-room .room-title-block .sub{font-size:8px!important;color:rgba(255,255,255,.68)!important}
+#view-room .room-topbar .icon-btn,#view-room .room-topbar .stat-pill-btn{width:30px!important;height:30px!important;padding:3px!important;border-radius:50%!important;color:#fff!important}
+#view-room .room-topbar .icon-btn img,#view-room .room-topbar .stat-pill-btn img{width:22px!important;height:22px!important;object-fit:contain!important}
+#view-room .room-topbar .room-header-keep{font-size:7px!important;font-weight:800!important;color:#fff!important}
+#view-room .room-online-counter{gap:2px!important;padding:0 5px!important;font-size:9px!important}
+#view-room .room-online-members-icon{width:16px!important;height:16px!important}
+#view-room .stage-wrap{padding:9px 10px 3px!important}
+#view-room .stage-glow{width:210px!important;height:130px!important;opacity:.65!important}
+#view-room .seat-grid{grid-template-columns:repeat(4,1fr)!important;gap:9px 5px!important}
+#view-room .seat{gap:3px!important}
+#view-room .seat-circle{
+  width:52px!important;min-width:52px!important;max-width:52px!important;height:52px!important;
+  background:rgba(255,255,255,.12)!important;border:1px solid rgba(255,255,255,.18)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.10)!important;font-size:14px!important;
+}
+#view-room .seat.occupied .seat-circle{border:1px solid rgba(255,214,108,.62)!important;background:rgba(255,255,255,.08)!important}
+#view-room .seat-name{font-size:8px!important;color:rgba(255,255,255,.78)!important}
+#view-room .seat-num{font-size:7px!important;color:rgba(255,255,255,.45)!important}
+#view-room .gift-calculator-badge{height:11px!important;line-height:11px!important;font-size:7px!important;bottom:-9px!important}
+#view-room .chat-panel{padding:3px 10px!important}
+#view-room .chat-log{gap:4px!important;padding:4px 0!important}
+#view-room .chat-msg{font-size:9px!important;line-height:1.25!important}
+#view-room .chat-msg .when{font-size:7px!important}
+#view-room .room-toolbar{
+  min-height:52px!important;padding:6px 8px calc(7px + env(safe-area-inset-bottom))!important;gap:5px!important;
+  background:rgba(4,10,17,.46)!important;border-top:1px solid rgba(255,255,255,.10)!important;
+  backdrop-filter:blur(16px)!important;-webkit-backdrop-filter:blur(16px)!important;
+}
+#view-room .room-toolbar .tool-btn{width:31px!important;height:31px!important;min-width:31px!important;border-radius:50%!important;background:rgba(255,255,255,.08)!important;border:1px solid rgba(255,255,255,.13)!important}
+#view-room .room-toolbar .tool-icon-img{width:20px!important;height:20px!important}
+#view-room .chat-input{height:31px!important;padding:6px 10px!important;font-size:9px!important;background:rgba(255,255,255,.09)!important;border:1px solid rgba(255,255,255,.12)!important;color:#fff!important}
+#view-room .chat-input::placeholder{color:rgba(255,255,255,.55)!important}
+#view-room #btn-send-chat{width:31px!important;height:31px!important}
+#view-room #btn-room-more{font-size:14px!important}
+
+/* ===== PROFILE / ME: reference cream header + transparent icon rows ===== */
+#view-profile.pp-profile-skin{background:#f6f6f6!important}
+#view-profile .pp-profile-shell{background:#f6f6f6!important}
+#view-profile .pp-profile-hero{
+  background:linear-gradient(180deg,#fbefd7 0%,#fff8eb 56%,#fff 100%)!important;
+  padding-top:4px!important;
+}
+#view-profile .pp-profile-header{height:43px!important;padding:0 14px!important}
+#view-profile .pp-profile-header h2{font-size:16px!important;color:#24211e!important}
+#view-profile .pp-profile-main{padding:5px 14px 2px!important;gap:10px!important}
+#view-profile .pp-avatar-column{flex-basis:64px!important}
+#view-profile .pp-avatar-ring{width:64px!important;height:64px!important}
+#view-profile .pp-profile-info{padding-top:3px!important}
+#view-profile .pp-name{font-size:17px!important;color:#282522!important}
+#view-profile .pp-edit-link{margin-top:5px!important;font-size:10px!important;color:#888!important}
+#view-profile .pp-id-line{margin-top:7px!important;gap:5px!important}
+#view-profile .pp-id-badge{width:17px!important;height:17px!important;font-size:7px!important}
+#view-profile .pp-id-value{font-size:10px!important}
+#view-profile .pp-copy-btn{width:22px!important;height:22px!important;font-size:11px!important}
+#view-profile .pp-stats{margin:11px 4px 0!important}
+#view-profile .pp-stat{padding:3px 0 5px!important}
+#view-profile .pp-stat strong{font-size:14px!important}
+#view-profile .pp-stat span{font-size:9px!important;margin-top:4px!important}
+#view-profile .pp-badges{padding:7px 14px 11px!important;gap:5px!important}
+#view-profile .pp-level,#view-profile .pp-vip{height:20px!important;min-height:20px!important;padding:0 7px!important;font-size:8px!important}
+#view-profile .pp-gender,#view-profile .pp-country{width:20px!important;height:20px!important;font-size:10px!important}
+#view-profile .pp-menu-card{border-radius:15px 15px 0 0!important;margin-top:0!important;background:#fff!important;box-shadow:0 -3px 13px rgba(0,0,0,.035)!important;padding-top:2px!important}
+#view-profile .pp-menu-row{height:52px!important;padding:0 14px!important;gap:9px!important;background:rgba(255,255,255,.96)!important}
+#view-profile .pp-menu-row::after{left:46px!important;right:12px!important;background:#f0f0f0!important}
+#view-profile .pp-menu-icon{width:30px!important;height:30px!important;border-radius:0!important;background:transparent!important;border:0!important;box-shadow:none!important}
+#view-profile .pp-menu-icon-image img,#view-profile .pp-wallet-icon img,#view-profile .pp-premium-sbi-icon img,#view-profile .pp-withdraw-icon img{width:30px!important;height:30px!important;filter:none!important}
+#view-profile .pp-menu-label{font-size:12px!important;font-weight:650!important;color:#292723!important}
+#view-profile .pp-menu-values{gap:7px!important}
+#view-profile .pp-coin,#view-profile .pp-beans{font-size:9px!important;gap:2px!important}
+#view-profile .pp-coin img,#view-profile .pp-beans img{width:17px!important;height:17px!important}
+#view-profile .pp-arrow{font-size:18px!important;color:#b9b5b1!important}
+#view-profile .pp-divider{margin-left:46px!important}
+#view-profile .bottom-nav{height:auto!important;background:rgba(255,255,255,.92)!important;backdrop-filter:blur(16px)!important;border-top:1px solid #ece9e5!important;box-shadow:0 -5px 14px rgba(0,0,0,.05)!important}
+#view-profile .nav-icon-custom{width:21px!important;height:21px!important}
+#view-profile .nav-btn span{font-size:8px!important}
+
+/* ===== COMMON BOTTOM NAV ===== */
+.bottom-nav{padding:5px 5px calc(5px + env(safe-area-inset-bottom))!important;min-height:48px!important}
+.nav-btn{gap:2px!important;padding:3px 0!important;font-size:14px!important}
+.nav-icon-custom{width:21px!important;height:21px!important;flex-basis:21px!important}
+.nav-btn span{font-size:8px!important;font-weight:700!important}
+.nav-btn.active{color:#9a7425!important;text-shadow:none!important}
+
+/* Keep supplied artwork truly transparent: no synthetic white/gold backing. */
+.pp-premium-icon,.side-ico,.room-action-icon,.auth-social-icon{background:transparent!important;border:0!important;box-shadow:none!important;backdrop-filter:none!important}

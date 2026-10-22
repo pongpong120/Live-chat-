@@ -1,0 +1,16 @@
+'use strict';
+const fs = require('fs');
+const assert = require('assert');
+const html = fs.readFileSync('public/wallet-ui.html', 'utf8');
+const start = html.lastIndexOf('<script>');
+const end = html.indexOf('</script>', start);
+assert(start >= 0 && end > start, 'UPI chooser script must exist');
+const script = html.slice(start, end);
+assert(script.includes("phonepe:'com.phonepe.app'"), 'PhonePe package mapping missing');
+assert(script.includes("gpay:'com.google.android.apps.nbu.paisa.user'"), 'Google Pay package mapping missing');
+assert(script.includes("paytm:'net.one97.paytm'"), 'Paytm package mapping missing');
+assert(script.includes("fetch('/api/wallet/recharge/order/'+encodeURIComponent(orderMatch)+'/payment-data'"), 'payment data must be fetched for the current server order');
+assert(script.includes('window.location.href=\'intent://pay?\'+query+\'#Intent;scheme=upi;package=\'+packages[method]+\';end\''), 'Android package-specific intent launch missing');
+assert(script.includes('if(!data||!data.success||!data.upiLink||String(data.orderId)!==String(orderMatch))'), 'server order/link validation missing');
+assert(!script.includes('bypass=true;button.click()'), 'must not trigger a delayed second click after async fetch');
+console.log('rechargeDirectAppLaunch: PASS');

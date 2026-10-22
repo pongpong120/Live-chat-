@@ -1,0 +1,104 @@
+/* ==========================================================================
+   PingPong — ROOM FINAL FIX 2026-10-11 (loaded LAST, wins the cascade)
+   1) Room chat messages visible   2) Small, perfectly round seats
+   3) Inbox icon always visible    4) Send button / mic bar layout
+   5) Rocket Crash modal
+   ========================================================================== */
+
+/* ---- 1) CHAT: messages were pushed below the screen --------------------
+   An older rule gave #chat-log `height:100%` while the rules/announcement
+   cards sit above it in the same column, so the log was taller than the
+   panel and its bottom-anchored messages landed behind the toolbar.       */
+#view-room .chat-panel{
+  display:flex!important;flex-direction:column!important;justify-content:flex-start!important;
+  overflow:hidden!important;min-height:0!important;
+  padding:4px 74px calc(124px + env(safe-area-inset-bottom)) 10px!important;
+  background:transparent!important;
+}
+#view-room .room-info-stack{
+  flex:0 0 auto!important;max-height:112px!important;overflow:hidden!important;margin-bottom:6px!important;
+}
+#view-room .room-info-card{padding:7px 10px!important;font-size:12px!important;line-height:1.3!important;}
+#view-room .room-rules-card{max-height:calc(2.6em + 14px)!important;overflow:hidden!important;font-size:11.5px!important;}
+#view-room .room-announcement-text{font-size:13px!important;margin-top:2px!important;}
+#view-room .chat-log{
+  flex:1 1 0!important;height:auto!important;min-height:96px!important;max-height:none!important;
+  display:flex!important;flex-direction:column!important;justify-content:flex-end!important;
+  overflow-y:auto!important;overflow-x:hidden!important;gap:6px!important;padding:2px 0!important;
+  visibility:visible!important;opacity:1!important;
+}
+#view-room .chat-log.empty{min-height:0!important;}
+#view-room .chat-msg,
+#view-room .chat-msg.activity-line{
+  display:flex!important;visibility:visible!important;opacity:1;flex:0 0 auto!important;
+  width:100%!important;font-size:13px!important;line-height:1.3!important;color:#fff!important;
+}
+#view-room .chat-msg.chat-msg-expiring{opacity:0;}
+#view-room .message-identity-pill{max-width:100%!important;}
+#view-room .chat-message-line{color:#fff!important;font-size:13.5px!important;}
+
+/* ---- 2) SEATS: small and fully round ---------------------------------- */
+#view-room{--pp-seat-size:clamp(42px,11.6vw,50px);}
+#view-room #seat-grid .seat-circle,
+#view-room .seat-grid .seat-circle,
+#view-room .seat-circle{
+  width:var(--pp-seat-size)!important;height:var(--pp-seat-size)!important;
+  min-width:var(--pp-seat-size)!important;max-width:var(--pp-seat-size)!important;
+  min-height:var(--pp-seat-size)!important;max-height:var(--pp-seat-size)!important;
+  flex:0 0 var(--pp-seat-size)!important;aspect-ratio:1/1!important;
+  border-radius:50%!important;box-sizing:border-box!important;margin:0 auto!important;
+  position:relative!important;overflow:visible!important;
+  border:1.5px solid rgba(255,255,255,.45)!important;
+}
+#view-room .seat-circle::after{border-radius:50%!important;}
+#view-room .seat-avatar-photo,
+#view-room .seat-avatar-photo img,
+#view-room .seat-voice-effects,
+#view-room .seat-voice-effects span{border-radius:50%!important;}
+#view-room .seat-avatar-photo{overflow:hidden!important;inset:0!important;width:100%!important;height:100%!important;}
+#view-room .seat-avatar-photo img{width:100%!important;height:100%!important;object-fit:cover!important;aspect-ratio:1/1!important;}
+#view-room .seat-empty-mic-icon{width:46%!important;height:auto!important;max-width:24px!important;}
+#view-room .seat-lock-icon{width:20px!important;height:20px!important;}
+#view-room .seat-circle .custom-frame-img{border-radius:0!important;}
+#view-room #seat-grid .seat{max-width:70px!important;}
+#view-room #seat-grid .seat-name{font-size:10px!important;max-width:70px!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;}
+@media(max-width:380px){#view-room{--pp-seat-size:42px;}#view-room #seat-grid .seat-name{font-size:9px!important;}}
+
+/* ---- 3) INBOX ICON: always visible inside a room ----------------------- */
+#view-room #private-message-indicator{
+  position:fixed!important;left:auto!important;right:70px!important;
+  bottom:calc(72px + env(safe-area-inset-bottom))!important;
+  width:42px!important;height:42px!important;min-width:42px!important;min-height:42px!important;
+  padding:0!important;border-radius:50%!important;z-index:805!important;
+  display:none!important;align-items:center!important;justify-content:center!important;
+  background:rgba(28,22,45,.78)!important;border:1px solid rgba(255,255,255,.28)!important;
+  box-shadow:0 6px 18px rgba(0,0,0,.30)!important;transform:none!important;gap:0!important;
+}
+#view-room #private-message-indicator:not(.hidden){
+  display:flex!important;opacity:1!important;visibility:visible!important;pointer-events:auto!important;transform:none!important;
+}
+#view-room #private-message-indicator > img{width:26px!important;height:26px!important;max-width:26px!important;max-height:26px!important;}
+#view-room #private-message-indicator .private-message-label{display:none!important;}
+#view-room #private-message-indicator .private-message-count{
+  position:absolute!important;top:-4px!important;right:-4px!important;min-width:18px!important;height:18px!important;
+  padding:0 4px!important;font-size:10px!important;line-height:18px!important;
+}
+#view-room #private-message-indicator .private-message-count.hidden{display:none!important;}
+
+/* ---- 4) Mic-invite bar leaves room for the inbox icon; Send button ----- */
+#view-room .room-mic-invite{right:122px!important;}
+#view-room .room-toolbar #btn-send-chat{display:none!important;}
+#view-room .room-toolbar.has-text #btn-send-chat{display:inline-flex!important;}
+#view-room .room-toolbar.has-text #btn-room-bag,
+#view-room .room-toolbar.has-text #btn-room-game-quick{display:none!important;}
+
+/* ---- 5) Rocket Crash modal -------------------------------------------- */
+#rocket-crash-modal{z-index:9999!important;}
+#rocket-crash-modal #rocket-crash-frame{display:block!important;width:100%!important;height:100%!important;border:0!important;}
+#rocket-crash-modal #btn-close-rocket-crash{display:none!important;}
+
+/* ---- 6) Home tabs (Mine / Popular): one identical size ---------------- */
+#view-home .home-primary-tabs{gap:22px!important;align-items:flex-end!important;}
+#view-home .home-primary-tabs .home-primary-tab,
+#view-home .home-primary-tabs .home-primary-tab.active{font-size:20px!important;line-height:1.2!important;font-weight:800!important;letter-spacing:0!important;}
+@media (max-width:420px){#view-home .home-primary-tabs .home-primary-tab,#view-home .home-primary-tabs .home-primary-tab.active{font-size:19px!important;}}
