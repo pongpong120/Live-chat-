@@ -101,6 +101,17 @@ async function run({ databaseUrl } = {}) {
             { name: "module4_wallet_ledger/wallet/schema.sql", fullPath: walletSchema }
         ];
         for (const item of bootstrap) {
+            // Skip legacy base schema on existing databases.
+            // It contains non-idempotent CREATE TABLE statements.
+            if (item.name === "db/schema.sql") {
+                const exists = await pool.query(
+                    "SELECT to_regclass('public.users') AS users"
+                );
+                if (exists.rows[0].users) {
+                    console.log("[database] base schema already present — skipping db/schema.sql");
+                    continue;
+                }
+            }
             const sql = fs.readFileSync(item.fullPath, "utf8");
             console.log(`[database] applying ${item.name} ...`);
             await pool.query(sql);
