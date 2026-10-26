@@ -37,7 +37,7 @@ let loadedProjectId = null;
 // verifyIdToken() rejects it with a real but easy-to-miss reason. We check
 // for this explicitly at startup instead of letting it surface only as a
 // mystery per-request 401.
-const EXPECTED_PROJECT_ID = "ping-pong-59407";
+const EXPECTED_PROJECT_ID = "pong-pong-8187e";
 
 function loadServiceAccount() {
     if (process.env.FIREBASE_SERVICE_ACCOUNT_BASE64) {
