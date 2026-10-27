@@ -482,6 +482,11 @@ async function transferBetweenUsers({ fromUserId, toUserId, currency, amount, tx
 // their ledger rows commit or roll back together; this closes the last gap
 // where a gift could otherwise require two independent wallet transactions.
 async function transferCrossCurrency({ fromUserId, toUserId, fromCurrency, toCurrency, amount, txnId, reason, context }) {
+    if (fromUserId == null || String(fromUserId).trim() === "" ||
+        toUserId == null || String(toUserId).trim() === "") {
+        throw new Error("[module4/wallet] cross-currency transfer requires valid sender and recipient userId");
+    }
+
     if (!fromUserId || !toUserId || !fromCurrency || !toCurrency) throw new Error('[module4/wallet] cross transfer identifiers are required');
     assertValidAmount(amount); assertValidTxnId(txnId); const abs=Math.abs(amount); if (abs<=0) throw new Error('[module4/wallet] amount must be > 0');
     const p=db.getPool(); if(!p) throw new Error('[module4/wallet] Postgres not configured');
@@ -503,7 +508,16 @@ async function transferCrossCurrency({ fromUserId, toUserId, fromCurrency, toCur
 }
 
 async function transferCrossCurrencyBatch({ fromUserId, toCurrency, fromCurrency, recipients, totalAmount, txnId, reason, context }) {
+    if (fromUserId == null || String(fromUserId).trim() === "") {
+        throw new Error("[module4/wallet] batch transfer requires valid sender userId");
+    }
+    if (!Array.isArray(recipients) || recipients.length === 0 ||
+        recipients.some(r => !r || r.userId == null || String(r.userId).trim() === "")) {
+        throw new Error("[module4/wallet] batch transfer requires valid recipient userId values");
+    }
+
     if (!fromUserId || !fromCurrency || !toCurrency || !Array.isArray(recipients) || !recipients.length) throw new Error('[module4/wallet] batch transfer arguments invalid');
+
     assertValidAmount(totalAmount); assertValidTxnId(txnId); const total=Math.abs(totalAmount); const p=db.getPool(); if(!p) throw new Error('[module4/wallet] Postgres not configured');
     const client=await p.connect();
     try { await client.query('BEGIN');

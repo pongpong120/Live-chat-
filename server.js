@@ -484,6 +484,13 @@ const FRAME_FOLDER = path.join(UPLOADS_ROOT, "frames");
 // Video Gift System — admin-uploaded MP4 gifts + their thumbnails.
 const VIDEO_GIFT_FOLDER = path.join(UPLOADS_ROOT, "video-gifts");
 const VIDEO_GIFT_THUMB_FOLDER = path.join(UPLOADS_ROOT, "video-gifts-thumbs");
+
+// RAILWAY VIDEO GIFT STORAGE FIX
+// Keep Video Gift folders available after startup/redeploy when the configured
+// persistent upload root is used. This does not alter the gift transaction flow.
+if (!fs.existsSync(VIDEO_GIFT_FOLDER)) fs.mkdirSync(VIDEO_GIFT_FOLDER, { recursive: true });
+if (!fs.existsSync(VIDEO_GIFT_THUMB_FOLDER)) fs.mkdirSync(VIDEO_GIFT_THUMB_FOLDER, { recursive: true });
+
 // SVIP Tag Management — admin-uploaded PNG tag per SVIP level (svip1.png..svip8.png).
 const SVIP_TAG_FOLDER = path.join(UPLOADS_ROOT, "svip-tags");
 // Groups — icon uploads for the Home screen Groups tab.
@@ -9277,6 +9284,20 @@ io.on("connection", (socket) => {
             return;
         }
         const targets = seatedUniqueIds.map((uid) => findUserByUserId(uid)).filter(Boolean);
+        if (
+            targets.length !== seatedUniqueIds.length ||
+            targets.length === 0 ||
+            !senderFound.user.userId ||
+            targets.some((t) => !t || !t.user || t.user.userId == null ||
+                String(t.user.userId).trim() === "")
+        ) {
+            console.error("[video-gift] Invalid sender/recipient identity; transaction aborted");
+            socket.emit("room-error", {
+                message: "Unable to identify gift recipient. Please try again"
+            });
+            return;
+        }
+
         // Video gifts can still be sent "to the room" with no specific
         // recipient (targets empty) — in that case it's a single broadcast
         // send, not per-recipient, so cost is just price * quantity.
@@ -9296,10 +9317,10 @@ io.on("connection", (socket) => {
         const calculatorUserTotalsSnapshot = { ...room.giftCalculator.totalsByUserId };
         try {
             if (productionWallet.enabled() && targets.length) {
-                const wr = await productionWallet.crossBatch(senderFound.user.userId, "diamonds", "beans", targets.map(t => ({userId:t.userId, amount:gift.price * qty})), totalCost, `Video gift ${gift.name}`, `video-gift:${roomId}`, makeGiftTransactionId(requestId, senderFound.user.userId, targets.map(t=>t.userId).join(","), gift.id, qty));
+                const wr = await productionWallet.crossBatch(senderFound.user.userId, "diamonds", "beans", targets.map(t => ({userId:t.user.userId, amount:gift.price * qty})), totalCost, `Video gift ${gift.name}`, `video-gift:${roomId}`, makeGiftTransactionId(requestId, senderFound.user.userId, targets.map(t=>t.user.userId).join(","), gift.id, qty));
                 if (!wr || wr.debit?.status !== "completed") throw new Error("Wallet transaction rejected");
                 senderFound.user.diamonds = Number(wr.debit.balanceAfter);
-                for (const c of (wr.credits || [])) { const receiver=targets.find(t=>t.userId===c.userId); if(receiver) receiver.user.beans=Number(c.balanceAfter); }
+                for (const c of (wr.credits || [])) { const receiver=targets.find(t=>t.user.userId===c.userId); if(receiver) receiver.user.beans=Number(c.balanceAfter); }
             } else if (productionWallet.enabled()) {
                 const receiver=findUserByUserId(room.hostId);
                 if(!receiver) throw new Error("Room host not found");
