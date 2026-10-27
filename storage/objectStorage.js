@@ -1,8 +1,8 @@
 'use strict';
 const crypto = require('crypto');
 const path = require('path');
-let S3Client, PutObjectCommand, DeleteObjectCommand;
-try { ({ S3Client, PutObjectCommand, DeleteObjectCommand } = require('@aws-sdk/client-s3')); } catch (_) {}
+let S3Client, PutObjectCommand, DeleteObjectCommand, GetObjectCommand;
+try { ({ S3Client, PutObjectCommand, DeleteObjectCommand, GetObjectCommand } = require('@aws-sdk/client-s3')); } catch (_) {}
 
 function provider() { return process.env.STORAGE_PROVIDER || (process.env.S3_BUCKET ? 's3' : 'local'); }
 function assertProductionStorage() {
@@ -26,10 +26,18 @@ async function put({key,body,contentType,metadata={}}) {
   if (provider()==='local') return { provider:'local', key, url:`/uploads/${key}` };
   await client().send(new PutObjectCommand({ Bucket:process.env.S3_BUCKET, Key:key, Body:body, ContentType:contentType, Metadata:metadata }));
   const base=(process.env.S3_PUBLIC_BASE_URL||'').replace(/\/$/,'');
-  return { provider:'s3', key, url:base?`${base}/${key}`:null };
+  const parts = key.split('/');
+  let url = base ? base + '/' + key : null;
+  if (!url && parts.length === 3 && parts[0] === 'photos') url = '/api/photo/' + encodeURIComponent(parts[1]) + '/' + encodeURIComponent(parts[2]);
+  return { provider:'s3', key, url };
+}
+async function getObject(key) {
+  assertProductionStorage();
+  if (provider() !== 's3') throw new Error('S3 storage is not enabled');
+  return client().send(new GetObjectCommand({ Bucket:process.env.S3_BUCKET, Key:key }));
 }
 async function remove(key) {
   if (!key) return;
   if (provider()==='s3') await client().send(new DeleteObjectCommand({Bucket:process.env.S3_BUCKET,Key:key}));
 }
-module.exports={provider,assertProductionStorage,createObjectKey,put,remove};
+module.exports={provider,assertProductionStorage,createObjectKey,put,getObject,remove};

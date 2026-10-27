@@ -3198,6 +3198,24 @@ app.post("/api/user/complete-profile", userAuth.requireUserAuth, authLimiter, (r
     }
 });
 
+// Serve profile photos stored in the S3-compatible bucket.
+app.get("/api/photo/:date/:filename", async (req, res) => {
+  try {
+    const date = req.params.date;
+    const filename = req.params.filename;
+    const dateParts = date.split("-");
+    if (dateParts.length !== 3 || dateParts[0].length !== 4 || dateParts[1].length !== 2 || dateParts[2].length !== 2 || !dateParts.join("").split("").every(c => c >= "0" && c <= "9")) return res.status(400).end();
+    if (!/^[a-f0-9-]+[.](jpg|jpeg|png|webp|gif)$/i.test(filename)) return res.status(400).end();
+    const storage = require("./storage/objectStorage.js");
+    const result = await storage.getObject("photos/" + date + "/" + filename);
+    if (!result.Body) return res.status(404).end();
+    res.setHeader("Content-Type", result.ContentType || "application/octet-stream");
+    res.setHeader("Cache-Control", "public, max-age=3600");
+    result.Body.on("error", err => { console.error("Photo stream error:", err.message); if (!res.headersSent) res.status(502).end(); else res.destroy(err); });
+    result.Body.pipe(res);
+  } catch (err) { console.error("Photo retrieval failed:", err.name || "Error"); if (!res.headersSent) res.status(404).end(); }
+});
+
 app.post("/api/user/upload-photo", userAuth.requireUserAuth, uploadPhoto.single("photo"), async (req, res) => {
     try {
         const mobile = resolveUserKey(req);
