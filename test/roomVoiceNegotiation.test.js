@@ -78,6 +78,15 @@ assert(peerSource.includes("ensureRoomAudioTransceiver(pc)"), "peer creation ens
 assert(!peerSource.includes("pc.addTrack("), "peer creation cannot add a duplicate audio transceiver with addTrack");
 assert(offerSource.includes("pc._ppVoiceAudioTransceiver") && offerSource.includes("audioSender.replaceTrack(audioTrack)"), "incoming offers reuse the existing audio sender");
 assert(offerSource.includes("pc.createAnswer()"), "answer direction still generates an SDP answer");
+const connectStart = source.indexOf("async function connectToPeer(remoteSocketId, iceRestart) {");
+const connectEnd = source.indexOf("\nfunction closePeer(", connectStart);
+const connectSource = source.slice(connectStart, connectEnd);
+assert(connectSource.includes("pc.createOffer(") && connectSource.includes('socket.emit("voice-offer"'), "either designated offerer can create and signal the audio offer");
+const syncStart = source.indexOf("async function ensureLocalTracksSent() {");
+const syncEnd = source.indexOf('$("btn-mic-toggle").addEventListener("click"', syncStart);
+const syncSource = source.slice(syncStart, syncEnd);
+assert(syncSource.includes("if (!publishing)") && syncSource.includes("sender.replaceTrack(null)"), "seat-to-audience transition stops microphone publishing but preserves receiver");
+assert(syncSource.includes("sender.replaceTrack(audioTrack)"), "audience-to-seat transition reuses sender to publish microphone");
 assert(source.includes('socket.on("voice-answer", async (data) => {'), "answer handler remains wired for speaker- and audience-created offers");
 
 // TURN availability is environment-dependent; the code must preserve the
