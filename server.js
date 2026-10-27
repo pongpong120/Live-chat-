@@ -10133,29 +10133,31 @@ io.on("connection", (socket) => {
     // validate-then-relay logic for all three so the fix only needs to live
     // in one place.
     function relayVoiceSignal(event, socket, target, targetUserId, payload) {
+        const tail = v => v ? String(v).slice(-5) : "none";
+        const drop = reason => {
+            relayVoiceSignal._diagCounts ||= Object.create(null);
+            const key = event + ":" + reason;
+            const n = relayVoiceSignal._diagCounts[key] || 0;
+            if (n < 5) {
+                console.warn(`[voice-signal-diag] dropped event=${event} reason=${reason} room=${tail(socket.currentRoom)} from=${tail(socket.userId)} targetUser=${tail(targetUserId)} targetSocket=${tail(target)}`);
+                relayVoiceSignal._diagCounts[key] = n + 1;
+            }
+        };
         try {
-            if (!socket.userId || !socket.currentRoom || !target || !targetUserId) return;
-            if (aiSecurity.isRateLimited(`voice-sig:${socket.userId}`, { windowMs: 10000, max: 200 })) return;
+            if (!socket.userId || !socket.currentRoom || !target || !targetUserId) return drop("missing-source-room-or-target");
+            if (aiSecurity.isRateLimited(`voice-sig:${socket.userId}`, { windowMs: 10000, max: 200 })) return drop("rate-limited");
             const room = rooms[socket.currentRoom];
-            if (!room) return;
-            // Authorize the destination by userId against the authoritative
-            // room seat list, then address the socket id through Socket.IO's
-            // adapter. This is important in clustered deployments: the old
-            // code used io.sockets.sockets.get(target), which only finds a
-            // socket on THIS Node instance, so a third seated speaker on a
-            // different instance could become visible but completely silent.
-            const targetSeat = (room.seats || []).find((seat) => seat && seat.userId === targetUserId);
-            const targetOnline = (room.onlineUsers || []).find((u) => u && u.userId === targetUserId);
-            if (!targetSeat && !targetOnline) return;
-            // The target socket id must match the room's CURRENT authoritative
-            // socket identity for both seated users and audience listeners.
-            // Without this check, an ICE/offer packet already in flight could
-            // be delivered to an old socket after a mobile reconnect, creating
-            // a second stale WebRTC graph and intermittent duplicate/silent
-            // audio. Redis-backed io.to() remains cross-instance-safe.
+            if (!room) return drop("room-not-found");
+            const targetSeat = (room.seats || []).find(seat => seat && seat.userId === targetUserId);
+            const targetOnline = (room.onlineUsers || []).find(u => u && u.userId === targetUserId);
+            if (!targetSeat && !targetOnline) return drop("target-user-not-in-room");
             const authoritativeTargetSocket = targetSeat?.socketId || targetOnline?.socketId;
-            if (!authoritativeTargetSocket || authoritativeTargetSocket !== target) return;
+            if (!authoritativeTargetSocket) return drop("target-socket-missing");
+            if (authoritativeTargetSocket !== target) return drop("target-socket-mismatch");
             io.to(authoritativeTargetSocket).emit(event, { ...payload, from: socket.id });
+            if (event !== "voice-candidate") {
+                console.info(`[voice-signal-diag] relayed event=${event} room=${tail(socket.currentRoom)} from=${tail(socket.userId)} targetUser=${tail(targetUserId)}`);
+            }
         } catch (e) {
             console.error(`[voice-signal] ${event} relay error:`, e && e.message);
         }
