@@ -1362,9 +1362,14 @@ async function refreshVoiceMode() {
     }
   } catch (_) {}
   try {
-    const res = await fetch("/api/voice-sfu/mode");
+    // Staged rollout decisions are room-scoped. Without roomId the endpoint
+    // reports the global base mode ("mesh" for VOICE_MODE=staged), which
+    // would leave allowlisted rooms on the wrong transport.
+    const roomQuery = currentRoomId ? `?roomId=${encodeURIComponent(currentRoomId)}` : "";
+    const res = await fetch(`/api/voice-sfu/mode${roomQuery}`);
     const data = await res.json();
-    voiceMode = data && data.success && data.voiceMode === "sfu" ? "sfu" : "mesh";
+    const resolvedMode = data && (data.effectiveVoiceMode || data.voiceMode);
+    voiceMode = data && data.success && resolvedMode === "sfu" ? "sfu" : "mesh";
   } catch (e) {
     voiceMode = "mesh";
   }
@@ -2767,8 +2772,9 @@ socket.on("new-private-message", (msg) => {
     if (offerCollision && !pc.polite) return;
     try {
       if (localStream && mySeatNumber !== null && mySeatNumber !== undefined) {
-        const hasAudioSender = pc.getSenders().some(s => s._ppVoiceAudioSender || (s.track && s.track.kind === "audio"));
-        if (!hasAudioSender) localStream.getTracks().forEach(t => { const sender = pc.addTrack(t, localStream); if (sender) sender._ppVoiceAudioSender = true; });
+        const audioSender = pc._ppVoiceAudioTransceiver?.sender || pc.getSenders().find(s => s._ppVoiceAudioSender || (s.track && s.track.kind === "audio"));
+        const audioTrack = localStream.getAudioTracks()[0];
+        if (audioSender && audioTrack && audioSender.track !== audioTrack) await audioSender.replaceTrack(audioTrack);
       }
       if (offerCollision) {
         await pc.setLocalDescription({ type: "rollback" });
@@ -6460,8 +6466,17 @@ function applyAdaptiveBitrate(pc, kbps) {
 // voice-health.js). seatMap is already kept current for the UI; this just
 // reads it, no new state.
 function userIdForSocketId(sid) {
-  const entry = Object.values(seatMap).find((s) => s && s.socketId === sid);
-  return entry ? entry.userId : null;
+  if (!sid) return null;
+  // Room voice peers include audience listeners as well as seated speakers.
+  // seatMap only contains chair occupants; resolving a listener socket from
+  // seatMap alone returns null. The server requires targetUserId for every
+  // offer/answer/ICE relay, so this used to silently drop the seated
+  // speaker's ICE candidates when the destination was an audience listener.
+  const seated = Object.values(seatMap).find((s) => s && s.socketId === sid);
+  if (seated && seated.userId) return seated.userId;
+  const online = Array.isArray(currentRoom?.onlineUsers) ? currentRoom.onlineUsers : [];
+  const member = online.find((u) => u && u.socketId === sid);
+  return member?.userId || null;
 }
 
 // Connection diagnostics (item 6): periodic getStats() poll, console-only —
@@ -6600,17 +6615,15 @@ async function ensureLocalTracksSent() {
   // seat -> audience -> seat transitions cheap and race-resistant.
   await Promise.all(Object.entries(peerConnections).map(async ([sid, pc]) => {
     try {
-      const sender = pc.getSenders().find(s => s._ppVoiceAudioSender || (s.track && s.track.kind === "audio"));
+      const sender = pc._ppVoiceAudioTransceiver?.sender || pc.getSenders().find(s => s._ppVoiceAudioSender || (s.track && s.track.kind === "audio"));
       if (!publishing) {
         if (sender && sender.track) await sender.replaceTrack(null);
         return;
       }
-      if (!sender) {
-        const newSender = pc.addTrack(audioTrack, localStream);
-        if (newSender) newSender._ppVoiceAudioSender = true;
-        await connectToPeer(sid);
-        return;
-      }
+      // getOrCreatePeer() reserves the single audio sender before either side
+      // creates an offer. Reuse it rather than addTrack(), which would create
+      // a second audio transceiver/media section.
+      if (!sender) throw new Error("Room audio transceiver is missing");
       if (sender.track !== audioTrack || sender.track?.readyState === "ended") {
         await sender.replaceTrack(audioTrack);
         // replaceTrack normally does not need renegotiation. A forced ICE
@@ -6743,6 +6756,18 @@ function isCurrentRoomMember() {
   return Array.isArray(currentRoom.onlineUsers) && currentRoom.onlineUsers.some((u) => u && u.userId === me.userId);
 }
 
+function ensureRoomAudioTransceiver(pc) {
+  // Always negotiate an audio m-line, even when the audience member is the
+  // initial offerer and has no microphone stream. Reuse the existing audio
+  // transceiver so seat/audience transitions never create duplicate m-lines.
+  let transceiver = pc._ppVoiceAudioTransceiver || pc.getTransceivers().find((item) => item.receiver && item.receiver.track && item.receiver.track.kind === "audio");
+  if (!transceiver) transceiver = pc.addTransceiver("audio", { direction: "sendrecv" });
+  if (transceiver.direction !== "sendrecv") transceiver.direction = "sendrecv";
+  transceiver.sender._ppVoiceAudioSender = true;
+  pc._ppVoiceAudioTransceiver = transceiver;
+  return transceiver;
+}
+
 function getOrCreatePeer(remoteSocketId) {
   if (peerConnections[remoteSocketId]) return peerConnections[remoteSocketId];
   const pc = new RTCPeerConnection({ iceServers: roomIceServersResolved || ICE_SERVERS.iceServers, bundlePolicy: "max-bundle", rtcpMuxPolicy: "require", iceCandidatePoolSize: 4 });
@@ -6760,8 +6785,10 @@ function getOrCreatePeer(remoteSocketId) {
   // instead of both throwing.
   pc.polite = socket.id > remoteSocketId;
   pc.makingOffer = false;
+  const audioTransceiver = ensureRoomAudioTransceiver(pc);
   if (localStream && mySeatNumber !== null && mySeatNumber !== undefined) {
-    localStream.getTracks().forEach(t => { const sender = pc.addTrack(t, localStream); if (sender) sender._ppVoiceAudioSender = true; });
+    const audioTrack = localStream.getAudioTracks()[0];
+    if (audioTrack) audioTransceiver.sender.replaceTrack(audioTrack).catch((e) => console.warn("[voice] initial audio track attach failed:", e && e.message));
   }
   const sentCandidates = new Set(); // dedup: candidate exchange only needs each unique candidate once
   const pendingRemoteCandidates = [];
