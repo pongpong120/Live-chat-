@@ -8193,32 +8193,68 @@ function fwBroadcastLeaderboard() {
     io.emit("fruitwheel-leaderboard", fwLeaderboardPayload());
 }
 
-function fwRecoverRoundsOnBoot() {
+async function fwRecoverRoundsOnBoot() {
     const snapshot = safeRead(FRUIT_WHEEL_ROUNDS_FILE, {});
     const roomIds = Object.keys(snapshot || {});
     if (!roomIds.length) return;
     let refundedUsers = 0;
-    roomIds.forEach((roomId) => {
+    let failed = false;
+
+    // Each room/user aggregate is one deterministic logical refund. The
+    // wallet ledger's txn_id uniqueness makes a boot retry safe: a crash
+    // after credit but before snapshot cleanup cannot mint a second refund.
+    for (const roomId of roomIds) {
         const bets = snapshot[roomId] && snapshot[roomId].bets;
-        if (!bets) return;
-        Object.keys(bets).forEach((userId) => {
+        if (!bets) continue;
+        for (const userId of Object.keys(bets)) {
             const perFood = bets[userId] || {};
             const total = Object.values(perFood).reduce((a, b) => a + (Number(b) || 0), 0);
-            if (total <= 0) return;
+            if (!Number.isSafeInteger(total) || total <= 0) continue;
             const found = findUserByUserId(userId);
-            if (!found) return;
-            found.user.diamonds = clampDiamondBalance(userId, found.user.diamonds + total, "fruit-wheel-restart-refund");
-            // LEVEL SYSTEM UPGRADE 2026-08-04: removed — user.level no longer auto-recomputed from raw coin balance on every coin change (that was the "level increases automatically" bug). Level now only changes via idLevel.js recordGiftSent() (room gift send only), which also mirrors onto this same field. See idLevel.js.
-            logTransaction(userId, "diamonds", total, "Fruit Wheel refund (interrupted by server restart)");
-            pushWalletUpdate(userId);
-            refundedUsers++;
-        });
-    });
+            if (!found) {
+                failed = true;
+                console.error(`🎡 Fruit Wheel recovery deferred: missing user ${userId} for room ${roomId}`);
+                continue;
+            }
+            try {
+                if (productionWallet.enabled()) {
+                    const refundTxnId = `txn_fw_restart_refund_${String(roomId).replace(/[^a-zA-Z0-9_-]/g, "_")}_${String(userId).replace(/[^a-zA-Z0-9_-]/g, "_")}`;
+                    const wr = await productionWallet.credit(
+                        userId, "diamonds", total,
+                        "Fruit Wheel refund (interrupted by server restart)",
+                        `fruit-wheel:${roomId}:restart-recovery`,
+                        refundTxnId
+                    );
+                    if (!wr || wr.status === "rejected") throw new Error("durable wallet refund rejected");
+                    // For a replay, the ledger returns the old balance_after;
+                    // re-read current authoritative balance to avoid rolling
+                    // a newer wallet state backwards in the local mirror.
+                    const authoritative = await productionWallet.balance(userId, "diamonds");
+                    if (!Number.isFinite(Number(authoritative))) throw new Error("authoritative balance unavailable after refund");
+                    found.user.diamonds = Math.max(0, Math.floor(Number(authoritative)));
+                    if (!wr.replay) {
+                        logTransaction(userId, "diamonds", total, "Fruit Wheel refund (interrupted by server restart)");
+                    }
+                } else {
+                    found.user.diamonds = clampDiamondBalance(userId, found.user.diamonds + total, "fruit-wheel-restart-refund");
+                    logTransaction(userId, "diamonds", total, "Fruit Wheel refund (interrupted by server restart)");
+                }
+                pushWalletUpdate(userId);
+                refundedUsers++;
+            } catch (e) {
+                failed = true;
+                console.error(`🎡 Fruit Wheel recovery failed for room ${roomId}, user ${userId}: ${e.message}`);
+            }
+        }
+    }
+
     if (refundedUsers) {
         saveUsers();
-        console.log(`🎡 Fruit Wheel: refunded ${refundedUsers} in-flight bet(s) from ${roomIds.length} room(s) interrupted by the last server restart.`);
+        console.log(`🎡 Fruit Wheel: recovered ${refundedUsers} interrupted user wager(s) across ${roomIds.length} room(s).`);
     }
-    safeWrite(FRUIT_WHEEL_ROUNDS_FILE, {}, { immediate: true });
+    // Preserve the snapshot if any item failed. Successful credits are
+    // idempotent and can safely replay at the next startup.
+    if (!failed) safeWrite(FRUIT_WHEEL_ROUNDS_FILE, {}, { immediate: true });
 }
 
 // AUDIT FIX (Phase 13, wallet/economy audit, 2026-07-28): diamonds had no
@@ -10411,7 +10447,7 @@ app.use((err, req, res, next) => {
 (async () => {
     try {
         await productionCore.start({ users, clampDiamondBalance, clampBeansBalance });
-        fwRecoverRoundsOnBoot();
+        await fwRecoverRoundsOnBoot();
         process.on("SIGTERM", () => { try { fwPersistRounds(); } catch (_) {} productionCore.shutdown().catch(() => {}); });
         process.on("SIGINT", () => { try { fwPersistRounds(); } catch (_) {} productionCore.shutdown().catch(() => {}); });
         http.listen(PORT, () => {
