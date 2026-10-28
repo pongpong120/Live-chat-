@@ -10054,10 +10054,14 @@ io.on("connection", (socket) => {
             }
             if (found.user.diamonds < amount) return reject("insufficient-balance");
 
+            // Allocate one stable, unique identity for this individual wager
+            // before touching the wallet. Repeated same-chip/same-fruit bets
+            // in one round must never reuse an idempotency key.
+            const betId = fwNextBetId();
             const balanceBefore = Number(found.user.diamonds) || 0;
             let balanceAfter;
             if (productionWallet.enabled()) {
-                const wr = await productionWallet.debit(found.user.userId, "diamonds", amount, "Fruit Wheel bet", `fruit-wheel:${roomId}:${g.roundId}`, productionWallet.txnId(`fruit-wheel-bet:${roomId}:${g.roundId}:${found.user.userId}:${foodId}:${amount}`));
+                const wr = await productionWallet.debit(found.user.userId, "diamonds", amount, "Fruit Wheel bet", `fruit-wheel:${roomId}:${g.roundId}`, `fruit-wheel-bet:${roomId}:${g.roundId}:${found.user.userId}:${betId}`);
                 if (!wr || wr.status === "rejected") return reject(wr?.reason === "insufficient_funds" ? "insufficient-balance" : "wallet-transaction-rejected");
                 balanceAfter = Number(wr.balanceAfter);
                 found.user.diamonds = balanceAfter;
@@ -10071,10 +10075,8 @@ io.on("connection", (socket) => {
             if (!g.bets[socket.userId]) g.bets[socket.userId] = {};
             g.bets[socket.userId][foodId] = (g.bets[socket.userId][foodId] || 0) + amount;
 
-            // req #1/#5: unique Bet ID for every individual bet action, kept
-            // separate from g.bets (the aggregated payout source of truth, left
-            // untouched) purely for audit/history traceability.
-            const betId = fwNextBetId();
+            // Keep the unique per-action Bet ID in the trace log while g.bets
+            // remains the aggregated payout source of truth.
             if (!g.betLog) g.betLog = [];
             g.betLog.push({ betId, userId: socket.userId, name: found.user.name, foodId, amount, balanceBefore, balanceAfter, roundId: g.roundId, at: Date.now() });
 
