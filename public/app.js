@@ -6466,8 +6466,17 @@ function applyAdaptiveBitrate(pc, kbps) {
 // voice-health.js). seatMap is already kept current for the UI; this just
 // reads it, no new state.
 function userIdForSocketId(sid) {
-  const entry = Object.values(seatMap).find((s) => s && s.socketId === sid);
-  return entry ? entry.userId : null;
+  if (!sid) return null;
+  // Room voice peers include audience listeners as well as seated speakers.
+  // seatMap only contains chair occupants; resolving a listener socket from
+  // seatMap alone returns null. The server requires targetUserId for every
+  // offer/answer/ICE relay, so this used to silently drop the seated
+  // speaker's ICE candidates when the destination was an audience listener.
+  const seated = Object.values(seatMap).find((s) => s && s.socketId === sid);
+  if (seated && seated.userId) return seated.userId;
+  const online = Array.isArray(currentRoom?.onlineUsers) ? currentRoom.onlineUsers : [];
+  const member = online.find((u) => u && u.socketId === sid);
+  return member?.userId || null;
 }
 
 // Connection diagnostics (item 6): periodic getStats() poll, console-only —
